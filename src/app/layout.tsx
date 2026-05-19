@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import "./globals.css";
+
+const basePath = process.env.NODE_ENV === "production" ? "/pokemon_bo3_tw_manager" : "";
 
 export const metadata: Metadata = {
   title: "BO3 瑞士輪賽事管理",
@@ -17,12 +18,10 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-black text-zinc-100 font-sans">
         <header className="border-b border-zinc-800">
           <div className="max-w-5xl mx-auto px-6 py-4 flex justify-center">
-            <Image
-              src="/image/labytcg-logo.png"
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={`${basePath}/image/labytcg-logo.png`}
               alt="LabyTCG 拉比卡牌"
-              width={626}
-              height={626}
-              priority
               className="h-20 w-auto"
             />
           </div>
