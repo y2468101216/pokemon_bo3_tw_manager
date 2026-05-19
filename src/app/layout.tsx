@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -15,8 +16,15 @@ export default function RootLayout({
     <html lang="zh-TW" className="h-full antialiased">
       <body className="min-h-full flex flex-col bg-black text-zinc-100 font-sans">
         <header className="border-b border-zinc-800">
-          <div className="max-w-5xl mx-auto px-6 py-5 text-center">
-            <span className="text-2xl font-bold tracking-wide">拉比卡牌</span>
+          <div className="max-w-5xl mx-auto px-6 py-4 flex justify-center">
+            <Image
+              src="/image/labytcg-logo.png"
+              alt="LabyTCG 拉比卡牌"
+              width={626}
+              height={626}
+              priority
+              className="h-20 w-auto"
+            />
           </div>
         </header>
         {children}
