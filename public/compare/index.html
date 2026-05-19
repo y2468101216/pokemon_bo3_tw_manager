@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
-<title>PACS vs MTG 賽制公平性比較</title>
+<title>TPC vs TPCi 賽制公平性比較</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -518,10 +518,10 @@ h2.section-title {
 
   <div class="title-block">
     <div class="kicker">Tournament Format Analysis</div>
-    <h1 class="title">當<em>輪空</em>變成<br>晉級捷徑</h1>
+    <h1 class="title">當<em>計分方式</em>變成<br>晉級問題</h1>
     <p class="dek">
-      把 PACS 大師球聯盟賽的「6-5-3-1-0」BO3 計分系統，
-      跟 Magic: The Gathering 三十年驗證的「3-1-0」標準制度
+      把 TPC 大師球聯盟賽的「6-5-3-1-0」BO3 計分系統，
+      跟 TPCi BO3 的「3-1-0」標準制度
       丟進同一個 400 人賽事模型，用四千次模擬看出兩件事——
       <strong>Day1 第一名的努力值多少，以及 Day1 末位的運氣值多少。</strong>
     </p>
@@ -554,14 +554,14 @@ h2.section-title {
     <p class="section-intro">
       兩種制度最大的差異不在於是否禁止平手，而在於
       <strong>「贏一場 BO3 該拿幾分」</strong>。
-      MTG 把局數細節留給 tiebreaker；PACS 直接把它塞進主分數，
+      TPCi 把局數細節留給 tiebreaker；TPC 直接把它塞進主分數，
       於是輪空（Bye）變得無處對應。
     </p>
 
     <div class="rules-grid">
       <div class="rule-card pacs">
         <div class="rule-label">RULE A · 現行</div>
-        <div class="rule-name">PACS</div>
+        <div class="rule-name">TPC</div>
         <table class="rule-table">
           <tr><td class="result">BO3 贏 2-0</td><td class="points">6 / 0</td></tr>
           <tr><td class="result">BO3 贏 2-1</td><td class="points">5 / 1</td></tr>
@@ -572,7 +572,7 @@ h2.section-title {
       </div>
       <div class="rule-card mtg">
         <div class="rule-label">RULE B · 業界標準</div>
-        <div class="rule-name">MTG</div>
+        <div class="rule-name">TPCi</div>
         <table class="rule-table">
           <tr><td class="result">BO3 贏 (任何比數)</td><td class="points">3 / 0</td></tr>
           <tr><td class="result">時間到平手</td><td class="points">1 / 1</td></tr>
@@ -609,12 +609,12 @@ h2.section-title {
     <!-- Callout 大數字 -->
     <div class="callout">
       <div class="callout-cell pacs">
-        <div class="callout-rule">PACS · Day1 第一名 Top8 率</div>
+        <div class="callout-rule">TPC · Day1 第一名 Top8 率</div>
         <div class="callout-number" id="pacs-first">--%</div>
         <div class="callout-label">Day1 拿到的優勢被 Day2 的高方差稀釋</div>
       </div>
       <div class="callout-cell mtg">
-        <div class="callout-rule">MTG · Day1 第一名 Top8 率</div>
+        <div class="callout-rule">TPCi · Day1 第一名 Top8 率</div>
         <div class="callout-number" id="mtg-first">--%</div>
         <div class="callout-label">穩定計分讓 Day1 的累積優勢真正被尊重</div>
       </div>
@@ -626,8 +626,8 @@ h2.section-title {
       <div class="chart-subtitle">FIG. 1 — FIRST SEED'S TOP8 RATE BY TIMEOUT RATE</div>
       <svg class="chart-svg" id="chart1" viewBox="0 0 800 360"></svg>
       <div class="legend">
-        <div class="legend-item"><span class="legend-swatch" style="background:#c93419"></span> PACS（現行）</div>
-        <div class="legend-item"><span class="legend-swatch" style="background:#1f4d3f"></span> MTG（標準）</div>
+        <div class="legend-item"><span class="legend-swatch" style="background:#c93419"></span> TPC（現行）</div>
+        <div class="legend-item"><span class="legend-swatch" style="background:#1f4d3f"></span> TPCi（標準）</div>
       </div>
     </div>
 
@@ -637,8 +637,8 @@ h2.section-title {
       <div class="chart-subtitle">FIG. 2 — LAST QUALIFIER'S TOP8 RATE, CONDITIONAL ON RECEIVING A BYE</div>
       <svg class="chart-svg" id="chart2" viewBox="0 0 800 380"></svg>
       <div class="legend">
-        <div class="legend-item"><span class="legend-swatch" style="background:#c93419;border-style:solid"></span> PACS（現行）</div>
-        <div class="legend-item"><span class="legend-swatch" style="background:#1f4d3f"></span> MTG（標準）</div>
+        <div class="legend-item"><span class="legend-swatch" style="background:#c93419;border-style:solid"></span> TPC（現行）</div>
+        <div class="legend-item"><span class="legend-swatch" style="background:#1f4d3f"></span> TPCi（標準）</div>
         <div class="legend-item"><span class="legend-swatch" style="background:transparent;border:2px dashed #15110d"></span> 沒拿 Bye</div>
         <div class="legend-item"><span class="legend-swatch" style="background:#15110d"></span> 有拿 Bye</div>
       </div>
@@ -668,8 +668,8 @@ h2.section-title {
     <div class="verdict">
       <div class="verdict-stamp">VERDICT</div>
       <div class="verdict-text">
-        PACS 規則下，Day1 第一名只有<em> 47-51% </em>機率打進 Top 8；
-        同一場賽事換成 MTG 規則，這個數字會跳到<em> 68-78%</em>。
+        TPC 規則下，Day1 第一名只有<em> 47-51% </em>機率打進 Top 8；
+        同一場賽事換成 TPCi 規則，這個數字會跳到<em> 68-78%</em>。
         差距 20-30 個百分點——這就是把局數差塞進主分數要付的代價。
       </div>
     </div>
@@ -680,8 +680,8 @@ h2.section-title {
         <div class="finding-body">
           <h3>Day1 第一名的努力被打折</h3>
           <p>
-            PACS 制度下 Day1 第一名晉級率落在 47-51%，
-            MTG 制度下落在 68-78%。Day2 BO3 的高分階梯（6 分上限 vs 3 分上限）
+            TPC 制度下 Day1 第一名晉級率落在 47-51%，
+            TPCi 制度下落在 68-78%。Day2 BO3 的高分階梯（6 分上限 vs 3 分上限）
             讓 Day2 一場好表現的權重等於 Day1 兩場。
             **Day1 表現好沒用，要看 Day2 抽到的對手與運氣**。
           </p>
@@ -690,10 +690,10 @@ h2.section-title {
       <div class="finding">
         <div class="finding-num">02</div>
         <div class="finding-body">
-          <h3>Bye 是真實存在的捷徑</h3>
+          <h3>Day2 Bye 是真實存在的捷徑</h3>
           <p>
             Day1 末位晉級者在 Day2 有 35% 機率拿到至少一次 Bye。
-            PACS 規則下，有拿 Bye 者 Top8 率為 31-39%，
+            TPC 規則下，有拿 Bye 者 Top8 率為 31-39%，
             沒拿 Bye 者只有 17-20%——
             <strong>Bye 紅利達到 +13 ~ +22 個百分點</strong>。
             換句話說，最後晉級者能不能進 Top8，
@@ -706,9 +706,9 @@ h2.section-title {
         <div class="finding-body">
           <h3>超時越多，制度越偏向弱者</h3>
           <p>
-            PACS 規則下，超時率從 0% 升到 40% 時，
+            TPC 規則下，超時率從 0% 升到 40% 時，
             Day1 末位晉級者的 Top8 率從 23.6% 升到 25.3%，
-            而 MTG 規則下幾乎不變（19.6% → 18.7%）。
+            而 TPCi 規則下幾乎不變（19.6% → 18.7%）。
             慢牌組環境放大隨機性，反而對 Day1 強者不利——
             這違反任何競技賽制的設計初衷。
           </p>
@@ -717,10 +717,10 @@ h2.section-title {
       <div class="finding">
         <div class="finding-num">04</div>
         <div class="finding-body">
-          <h3>MTG 的設計不是更簡單，是更乾淨</h3>
+          <h3>TPCi 的設計不是更簡單，是更乾淨</h3>
           <p>
-            兩種制度都需要 tiebreaker。差別在 MTG 把局數差異放在 tiebreaker（GW%），
-            主分數保持 3-1-0 的單調性；PACS 把它升到主分數，
+            兩種制度都需要 tiebreaker。差別在 TPCi 把局數差異放在 tiebreaker（GW%），
+            主分數保持 3-1-0 的單調性；TPC 把它升到主分數，
             導致 Bye、1-0、2-0、2-1 之間出現難以對應的縫隙。
             <strong>「絕對分出勝負」這個訴求在大型瑞士制下根本做不到</strong>，
             最終還是要 tiebreaker，但代價是行為扭曲。
