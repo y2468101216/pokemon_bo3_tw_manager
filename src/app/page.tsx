@@ -87,7 +87,7 @@ export default function HomePage() {
                 className="border border-zinc-800 rounded p-4 flex items-center justify-between gap-4"
               >
                 <Link
-                  href={`/tournament/${t.id}`}
+                  href={`/tournament/?id=${t.id}`}
                   className="flex-1 min-w-0 group"
                 >
                   <div className="font-semibold group-hover:underline truncate">

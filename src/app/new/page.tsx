@@ -41,7 +41,7 @@ export default function NewTournamentPage() {
     }
     const t = createTournament(name.trim(), playerNames, totalRounds);
     saveTournament(t);
-    router.push(`/tournament/${t.id}`);
+    router.push(`/tournament/?id=${t.id}`);
   }
 
   return (

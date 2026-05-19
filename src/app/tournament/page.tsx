@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import type { Match, MatchScore, Tournament } from "@/types/tournament";
 import {
   advanceToNextRound,
@@ -19,18 +19,36 @@ import {
 const SCORE_OPTIONS: MatchScore[] = ["2-0", "2-1", "1-2", "0-2", "1-0", "0-1"];
 
 export default function TournamentPage() {
-  const params = useParams<{ id: string }>();
+  return (
+    <Suspense
+      fallback={
+        <main className="max-w-5xl mx-auto px-6 py-10 w-full">
+          <p className="text-zinc-500">載入中…</p>
+        </main>
+      }
+    >
+      <TournamentView />
+    </Suspense>
+  );
+}
+
+function TournamentView() {
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id");
   const router = useRouter();
   const [tournament, setTournament] = useState<Tournament | null>(null);
   const [loading, setLoading] = useState(true);
   const [showHistory, setShowHistory] = useState(false);
 
   useEffect(() => {
-    if (!params?.id) return;
-    const t = loadTournament(params.id);
+    if (!id) {
+      setLoading(false);
+      return;
+    }
+    const t = loadTournament(id);
     setTournament(t);
     setLoading(false);
-  }, [params?.id]);
+  }, [id]);
 
   const playerNameMap = useMemo(() => {
     const map = new Map<string, string>();
@@ -278,7 +296,11 @@ export default function TournamentPage() {
             className="text-sm text-zinc-400 hover:text-white"
           >
             {showHistory ? "▼" : "▶"} 歷史輪次（
-            {tournament.rounds.filter((r) => r.roundNumber < tournament.currentRound).length}
+            {
+              tournament.rounds.filter(
+                (r) => r.roundNumber < tournament.currentRound,
+              ).length
+            }
             ）
           </button>
           {showHistory && (
