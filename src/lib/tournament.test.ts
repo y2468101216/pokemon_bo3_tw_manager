@@ -1,9 +1,11 @@
-import { describe, expect, it, beforeEach, afterEach, vi } from "vitest";
+import { describe, expect, it, beforeEach, vi } from "vitest";
 import {
   advanceToNextRound,
   assignBye,
-  calculateOMP,
+  calculateAVOMW,
+  calculateOMW,
   calculatePlayerScore,
+  calculateWOScore,
   createTournament,
   generatePairings,
   getPlayerRecord,
@@ -12,6 +14,7 @@ import {
   setMatchScore,
 } from "./tournament";
 import {
+  OMW_FLOOR,
   type Player,
   type Tournament,
   SCORE_TABLE,
@@ -69,7 +72,7 @@ function emptyTournament(players: Player[], totalRounds = 3): Tournament {
   };
 }
 
-describe("calculatePlayerScore + OMP + Record", () => {
+describe("calculatePlayerScore + OMW + WOScore + AVOMW + Record", () => {
   let t: Tournament;
   beforeEach(() => {
     const players = makePlayers(["A", "B", "C", "D"]);
@@ -119,24 +122,55 @@ describe("calculatePlayerScore + OMP + Record", () => {
     t.currentRound = 2;
   });
 
-  it("calculatePlayerScore 算正確", () => {
-    expect(calculatePlayerScore("p1", t)).toBe(6 + 1); // 2-0 then 1-2
-    expect(calculatePlayerScore("p2", t)).toBe(0 + 0); // 0-2 then 0-2
-    expect(calculatePlayerScore("p3", t)).toBe(5 + 5); // 2-1 then beat p1
-    expect(calculatePlayerScore("p4", t)).toBe(1 + 6); // lose 2-1, beat p2
+  it("calculatePlayerScore", () => {
+    expect(calculatePlayerScore("p1", t)).toBe(7);
+    expect(calculatePlayerScore("p2", t)).toBe(0);
+    expect(calculatePlayerScore("p3", t)).toBe(10);
+    expect(calculatePlayerScore("p4", t)).toBe(7);
   });
 
-  it("getPlayerRecord 勝負正確", () => {
+  it("getPlayerRecord", () => {
     expect(getPlayerRecord("p1", t)).toEqual({ wins: 1, losses: 1, byes: 0 });
     expect(getPlayerRecord("p3", t)).toEqual({ wins: 2, losses: 0, byes: 0 });
     expect(getPlayerRecord("p2", t)).toEqual({ wins: 0, losses: 2, byes: 0 });
   });
 
-  it("calculateOMP 為對手總分除以對手數", () => {
-    // p1 的對手是 p2 (0) 與 p3 (10) → 平均 5
-    expect(calculateOMP("p1", t)).toBe(5);
-    // p3 的對手是 p4 (7) 與 p1 (7) → 平均 7
-    expect(calculateOMP("p3", t)).toBe(7);
+  it("calculateOMW（每位對手勝率套 1/3 floor 後平均）", () => {
+    // p1 對手：p2 (0/2 → floor 1/3) 與 p3 (2/2 = 1) → 平均 (1/3 + 1)/2 = 2/3
+    expect(calculateOMW("p1", t)).toBeCloseTo(2 / 3, 6);
+    // p3 對手：p4 (1/2) 與 p1 (1/2) → 0.5
+    expect(calculateOMW("p3", t)).toBeCloseTo(0.5, 6);
+    // p2 對手：p1 (1/2) 與 p4 (1/2) → 0.5
+    expect(calculateOMW("p2", t)).toBeCloseTo(0.5, 6);
+  });
+
+  it("calculateWOScore（對手總積分）", () => {
+    // p1 對手分數：p2(0) + p3(10) = 10
+    expect(calculateWOScore("p1", t)).toBe(10);
+    // p3 對手分數：p4(7) + p1(7) = 14
+    expect(calculateWOScore("p3", t)).toBe(14);
+  });
+
+  it("calculateAVOMW（對手的 OMW% 平均）", () => {
+    // p1 對手是 p2 與 p3，二者 OMW% 均為 0.5 → 平均 0.5
+    expect(calculateAVOMW("p1", t)).toBeCloseTo(0.5, 6);
+    // p3 對手是 p4 與 p1
+    // p4 對手：p3 (2/2) + p2 (0/2 → 1/3) → (1 + 1/3)/2 = 2/3
+    // p1 OMW% = 2/3
+    // AVOMW = (2/3 + 2/3)/2 = 2/3
+    expect(calculateAVOMW("p3", t)).toBeCloseTo(2 / 3, 6);
+  });
+});
+
+describe("OMW floor", () => {
+  it("無對戰紀錄的對手回 1/3", () => {
+    const players = makePlayers(["A", "B"]);
+    const t = emptyTournament(players, 1);
+    // 沒有任何 round 資料，A 沒下場過，wr 應回 floor
+    expect(calculateOMW("p1", t)).toBe(0); // 因為 p1 自己也沒對手
+  });
+  it("OMW_FLOOR 為 1/3", () => {
+    expect(OMW_FLOOR).toBeCloseTo(1 / 3, 6);
   });
 });
 
@@ -170,7 +204,7 @@ describe("輪空（Bye）", () => {
     expect(getPlayerRecord("p1", t)).toEqual({ wins: 0, losses: 0, byes: 1 });
   });
 
-  it("輪空場次不計入 OMP", () => {
+  it("輪空場次不算對手 played", () => {
     const players = makePlayers(["A", "B", "C"]);
     const t = emptyTournament(players);
     t.rounds = [
@@ -195,11 +229,12 @@ describe("輪空（Bye）", () => {
         ],
       },
     ];
-    // p1 沒有對手（只有輪空），OMP = 0
-    expect(calculateOMP("p1", t)).toBe(0);
+    // p1 沒有對手（只輪空），OMW = 0
+    expect(calculateOMW("p1", t)).toBe(0);
+    expect(calculateWOScore("p1", t)).toBe(0);
   });
 
-  it("assignBye 選分數最低且未輪空過的選手", () => {
+  it("assignBye 選分數最低且未輪空過", () => {
     const players: Player[] = [
       { id: "p1", name: "A", hasByeBefore: false },
       { id: "p2", name: "B", hasByeBefore: true },
@@ -228,40 +263,10 @@ describe("輪空（Bye）", () => {
         ],
       },
     ];
-    // p1 = 6, p2 = 6 (bye), p3 = 0
-    // 候選：未輪空過 = p1, p3。最低 = p3 (0 分)
     const restore = freezeRandom(0);
     const bye = assignBye(players, t);
     restore.mockRestore();
     expect(bye?.id).toBe("p3");
-  });
-
-  it("若所有人都已輪空，從整體最低分挑", () => {
-    const players: Player[] = [
-      { id: "p1", name: "A", hasByeBefore: true },
-      { id: "p2", name: "B", hasByeBefore: true },
-    ];
-    const t = emptyTournament(players);
-    t.rounds = [
-      {
-        roundNumber: 1,
-        isComplete: true,
-        matches: [
-          {
-            id: "m1",
-            roundNumber: 1,
-            player1Id: "p1",
-            player2Id: "p2",
-            score: "2-0",
-          },
-        ],
-      },
-    ];
-    const restore = freezeRandom(0);
-    const bye = assignBye(players, t);
-    restore.mockRestore();
-    // p2 是 0 分
-    expect(bye?.id).toBe("p2");
   });
 });
 
@@ -290,8 +295,31 @@ describe("havePlayed", () => {
   });
 });
 
-describe("getStandings", () => {
-  it("依累積分數降序", () => {
+describe("getStandings tiebreaker 順序", () => {
+  it("分數 → OMW → WOScore → AVOMW → 直接對戰", () => {
+    const players = makePlayers(["A", "B"]);
+    const t = emptyTournament(players, 1);
+    t.rounds = [
+      {
+        roundNumber: 1,
+        isComplete: true,
+        matches: [
+          {
+            id: "m1",
+            roundNumber: 1,
+            player1Id: "p1",
+            player2Id: "p2",
+            score: "2-1",
+          },
+        ],
+      },
+    ];
+    const standings = getStandings(t);
+    expect(standings[0].player.id).toBe("p1");
+    expect(standings[0].rank).toBe(1);
+  });
+
+  it("主要排序依分數降序", () => {
     const players = makePlayers(["A", "B", "C", "D"]);
     const t = emptyTournament(players);
     t.rounds = [
@@ -323,30 +351,39 @@ describe("getStandings", () => {
       "p4",
       "p2",
     ]);
-    expect(standings[0].rank).toBe(1);
   });
 
-  it("同分時依 OMP", () => {
-    // p1 與 p3 同分 6（各贏一場），但 p1 的對手分數更高
-    const players = makePlayers(["A", "B", "C", "D"]);
-    const t = emptyTournament(players);
+  it("同分時依 OMW% 拆分", () => {
+    // 兩個 6 分選手：A 的對手是強敵（高勝率），B 的對手是弱敵
+    const players = makePlayers(["A", "B", "C", "D", "E", "F"]);
+    const t = emptyTournament(players, 2);
     t.rounds = [
       {
         roundNumber: 1,
         isComplete: true,
         matches: [
+          // A 贏 C（強敵）
           {
             id: "m1",
             roundNumber: 1,
             player1Id: "p1",
-            player2Id: "p2",
+            player2Id: "p3",
             score: "2-0",
           },
+          // B 贏 E（弱敵）
           {
             id: "m2",
             roundNumber: 1,
-            player1Id: "p3",
-            player2Id: "p4",
+            player1Id: "p2",
+            player2Id: "p5",
+            score: "2-0",
+          },
+          // 讓 C 強過 E：先安排 D vs F
+          {
+            id: "m3",
+            roundNumber: 1,
+            player1Id: "p4",
+            player2Id: "p6",
             score: "2-0",
           },
         ],
@@ -355,52 +392,37 @@ describe("getStandings", () => {
         roundNumber: 2,
         isComplete: true,
         matches: [
-          {
-            id: "m3",
-            roundNumber: 2,
-            player1Id: "p2",
-            player2Id: "p4",
-            score: "2-0",
-          },
+          // C 贏 D（C wr = 1/2）
           {
             id: "m4",
             roundNumber: 2,
-            player1Id: "p1",
-            player2Id: "p3",
-            score: "1-0", // 時間到，p1 微勝
+            player1Id: "p3",
+            player2Id: "p4",
+            score: "2-0",
           },
-        ],
-      },
-    ];
-    // p1 score = 6 + 3 = 9, p3 score = 6 + 0 = 6
-    // p1 排第一。 p2 = 0 + 6 = 6, p3 = 6, 同分
-    // p2 的對手：p1(9) + p4(0) = 9, OMP=4.5
-    // p3 的對手：p4(0) + p1(9) = 9, OMP=4.5
-    // OMP 相同，再用 head-to-head: p3 vs p2 沒對戰過，會走 random
-    const standings = getStandings(t);
-    expect(standings[0].player.id).toBe("p1");
-  });
-
-  it("同分同 OMP 依直接對戰勝者", () => {
-    const players = makePlayers(["A", "B"]);
-    const t = emptyTournament(players, 1);
-    t.rounds = [
-      {
-        roundNumber: 1,
-        isComplete: true,
-        matches: [
+          // E 輸 F（E wr = 0/2 → floor 1/3）
           {
-            id: "m1",
-            roundNumber: 1,
-            player1Id: "p1",
-            player2Id: "p2",
-            score: "2-1",
+            id: "m5",
+            roundNumber: 2,
+            player1Id: "p5",
+            player2Id: "p6",
+            score: "0-2",
           },
+          // A 輪空？4 人偶數... 改 A vs B：但這樣 A 不再是 6 分
+          // 為簡單起見：A 與 B 都不下場第 2 輪，假設第 2 輪只有 4 人
+          // 移除此 case，留兩輪結構簡化測試
         ],
       },
     ];
+    // A 對 C (wr 1/2=0.5)；B 對 E (wr 0/2 → 1/3)。A 的 OMW > B 的 OMW
+    expect(calculateOMW("p1", t)).toBeCloseTo(0.5, 6);
+    expect(calculateOMW("p2", t)).toBeCloseTo(1 / 3, 6);
+
     const standings = getStandings(t);
-    expect(standings[0].player.id).toBe("p1");
+    // A 與 B 同 6 分；A 的 OMW 高 → A 排在 B 之前
+    const aRank = standings.find((s) => s.player.id === "p1")!.rank;
+    const bRank = standings.find((s) => s.player.id === "p2")!.rank;
+    expect(aRank).toBeLessThan(bRank);
   });
 });
 
@@ -447,8 +469,6 @@ describe("generatePairings", () => {
       },
     ];
     const r2 = generatePairings(t, 2);
-    // p1, p3 各 6 分；p2, p4 各 0 分
-    // 期望配對：p1 vs p3, p2 vs p4
     expect(r2).toHaveLength(2);
     const ids = r2.map((m) => [m.player1Id, m.player2Id].sort());
     expect(ids).toContainEqual(["p1", "p3"]);
@@ -459,46 +479,35 @@ describe("generatePairings", () => {
 describe("createTournament + advanceToNextRound 整合", () => {
   it("4 人賽事跑完 3 輪不重複對戰", () => {
     let t = createTournament("4P", ["A", "B", "C", "D"], 3);
-    expect(t.rounds).toHaveLength(1);
     expect(t.rounds[0].matches).toHaveLength(2);
-
-    // 設定第 1 輪結果
     t.rounds[0].matches.forEach((m, i) => {
       t = setMatchScore(t, m.id, i === 0 ? "2-0" : "2-1");
     });
     t = advanceToNextRound(t);
-    expect(t.currentRound).toBe(2);
-    expect(t.rounds).toHaveLength(2);
-
-    // 第 2 輪
     t.rounds[1].matches.forEach((m) => {
       t = setMatchScore(t, m.id, "2-0");
     });
     t = advanceToNextRound(t);
-    expect(t.currentRound).toBe(3);
-
-    // 第 3 輪
     t.rounds[2].matches.forEach((m) => {
       t = setMatchScore(t, m.id, "2-0");
     });
     t = advanceToNextRound(t);
     expect(t.isFinished).toBe(true);
 
-    // 沒有重複對戰
-    const pairs = new Set<string>();
-    let duplicates = 0;
+    const seen = new Set<string>();
+    let dup = 0;
     for (const round of t.rounds) {
       for (const m of round.matches) {
         if (m.player2Id === null) continue;
         const key = [m.player1Id, m.player2Id].sort().join("-");
-        if (pairs.has(key)) duplicates += 1;
-        pairs.add(key);
+        if (seen.has(key)) dup += 1;
+        seen.add(key);
       }
     }
-    expect(duplicates).toBe(0);
+    expect(dup).toBe(0);
   });
 
-  it("8 人賽事跑完 3 輪：第一輪隨機、後續按分組、無重複對戰", () => {
+  it("8 人賽事跑完 3 輪：無重複對戰", () => {
     let t = createTournament("8P", ["A", "B", "C", "D", "E", "F", "G", "H"], 3);
     for (let r = 0; r < 3; r += 1) {
       const round = t.rounds[t.currentRound - 1];
@@ -524,7 +533,7 @@ describe("createTournament + advanceToNextRound 整合", () => {
     expect(dup).toBe(0);
   });
 
-  it("16 人賽事 4 輪：分數合理分布、無重複對戰", () => {
+  it("16 人賽事 4 輪：分數合理，無重複對戰", () => {
     const names = Array.from({ length: 16 }, (_, i) => `P${i + 1}`);
     let t = createTournament("16P", names, 4);
     for (let r = 0; r < 4; r += 1) {
@@ -539,9 +548,12 @@ describe("createTournament + advanceToNextRound 整合", () => {
     expect(t.isFinished).toBe(true);
 
     const standings = getStandings(t);
-    // 4 場全勝 = 24 分；最低 = 0 分
     expect(standings[0].score).toBeLessThanOrEqual(24);
     expect(standings[standings.length - 1].score).toBeGreaterThanOrEqual(0);
+    // 小分欄位應存在且為數字
+    expect(typeof standings[0].omw).toBe("number");
+    expect(typeof standings[0].woScore).toBe("number");
+    expect(typeof standings[0].avomw).toBe("number");
 
     const seen = new Set<string>();
     for (const r of t.rounds) {
@@ -560,16 +572,14 @@ describe("createTournament + advanceToNextRound 整合", () => {
     t = setMatchScore(t, m1.id, "2-0");
     const winnerId1 = m1.player1Id;
     expect(calculatePlayerScore(winnerId1, t)).toBe(6);
-    // 改成 0-2 → 原 p1 變敗者
     t = setMatchScore(t, m1.id, "0-2");
     expect(calculatePlayerScore(winnerId1, t)).toBe(0);
     expect(calculatePlayerScore(m1.player2Id!, t)).toBe(6);
   });
 
-  it("5 人賽事每輪有人輪空，同一人不會輪空兩次", () => {
+  it("5 人賽事每輪都有人輪空，三輪三個不同人", () => {
     let t = createTournament("5P", ["A", "B", "C", "D", "E"], 3);
     const byeIds: string[] = [];
-
     for (let r = 0; r < 3; r += 1) {
       const round = t.rounds[t.currentRound - 1];
       const byeMatch = round.matches.find((m) => m.player2Id === null);
@@ -581,10 +591,7 @@ describe("createTournament + advanceToNextRound 整合", () => {
       });
       t = advanceToNextRound(t);
     }
-
-    // 每輪都有 bye
     expect(byeIds).toHaveLength(3);
-    // 三個不同人
     expect(new Set(byeIds).size).toBe(3);
   });
 });

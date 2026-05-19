@@ -46,11 +46,15 @@ export interface StandingRow {
   player: Player;
   rank: number;
   score: number;
-  omp: number;
+  omw: number;
+  woScore: number;
+  avomw: number;
   wins: number;
   losses: number;
   byes: number;
 }
+
+export const OMW_FLOOR = 1 / 3;
 
 export function suggestRounds(playerCount: number): number {
   if (playerCount < 2) return 0;

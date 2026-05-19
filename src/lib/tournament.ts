@@ -6,8 +6,13 @@ import {
   type StandingRow,
   type Tournament,
   BYE_SCORE,
+  OMW_FLOOR,
   SCORE_TABLE,
 } from "@/types/tournament";
+
+function isP1Winner(score: NonNullable<Match["score"]>): boolean {
+  return score === "2-0" || score === "2-1" || score === "1-0";
+}
 
 export function calculatePlayerScore(
   playerId: string,
@@ -29,26 +34,85 @@ export function calculatePlayerScore(
   return total;
 }
 
-export function calculateOMP(
-  playerId: string,
-  tournament: Tournament,
-): number {
-  const opponentIds: string[] = [];
+function getOpponentIds(playerId: string, tournament: Tournament): string[] {
+  const out: string[] = [];
   for (const round of tournament.rounds) {
     for (const match of round.matches) {
       if (match.player2Id === null) continue;
       if (match.score === null) continue;
-      if (match.player1Id === playerId) opponentIds.push(match.player2Id);
-      else if (match.player2Id === playerId)
-        opponentIds.push(match.player1Id);
+      if (match.player1Id === playerId) out.push(match.player2Id);
+      else if (match.player2Id === playerId) out.push(match.player1Id);
     }
   }
-  if (opponentIds.length === 0) return 0;
-  const sum = opponentIds.reduce(
+  return out;
+}
+
+function getPlayedMatchesFor(
+  playerId: string,
+  tournament: Tournament,
+): { wins: number; played: number } {
+  let wins = 0;
+  let played = 0;
+  for (const round of tournament.rounds) {
+    for (const match of round.matches) {
+      if (match.player2Id === null) continue;
+      if (!match.score) continue;
+      const isP1 = match.player1Id === playerId;
+      const isP2 = match.player2Id === playerId;
+      if (!isP1 && !isP2) continue;
+      played += 1;
+      const p1Wins = isP1Winner(match.score);
+      if ((isP1 && p1Wins) || (isP2 && !p1Wins)) wins += 1;
+    }
+  }
+  return { wins, played };
+}
+
+function matchWinRate(playerId: string, tournament: Tournament): number {
+  const { wins, played } = getPlayedMatchesFor(playerId, tournament);
+  if (played === 0) return OMW_FLOOR;
+  return Math.max(wins / played, OMW_FLOOR);
+}
+
+export function calculateOMW(
+  playerId: string,
+  tournament: Tournament,
+): number {
+  const opponents = getOpponentIds(playerId, tournament);
+  if (opponents.length === 0) return 0;
+  const sum = opponents.reduce(
+    (acc, oid) => acc + matchWinRate(oid, tournament),
+    0,
+  );
+  return sum / opponents.length;
+}
+
+export function calculateWOScore(
+  playerId: string,
+  tournament: Tournament,
+): number {
+  const opponents = getOpponentIds(playerId, tournament);
+  return opponents.reduce(
     (acc, oid) => acc + calculatePlayerScore(oid, tournament),
     0,
   );
-  return sum / opponentIds.length;
+}
+
+function opponentOMW(playerId: string, tournament: Tournament): number {
+  return calculateOMW(playerId, tournament);
+}
+
+export function calculateAVOMW(
+  playerId: string,
+  tournament: Tournament,
+): number {
+  const opponents = getOpponentIds(playerId, tournament);
+  if (opponents.length === 0) return 0;
+  const sum = opponents.reduce(
+    (acc, oid) => acc + opponentOMW(oid, tournament),
+    0,
+  );
+  return sum / opponents.length;
 }
 
 export function getPlayerRecord(
@@ -68,10 +132,7 @@ export function getPlayerRecord(
       const isP1 = match.player1Id === playerId;
       const isP2 = match.player2Id === playerId;
       if (!isP1 && !isP2) continue;
-      const p1Wins =
-        match.score === "2-0" ||
-        match.score === "2-1" ||
-        match.score === "1-0";
+      const p1Wins = isP1Winner(match.score);
       if ((isP1 && p1Wins) || (isP2 && !p1Wins)) wins += 1;
       else losses += 1;
     }
@@ -105,12 +166,8 @@ function headToHeadWinner(
       if (!match.score) continue;
       const ids = [match.player1Id, match.player2Id];
       if (!ids.includes(aId) || !ids.includes(bId)) continue;
-      const p1Wins =
-        match.score === "2-0" ||
-        match.score === "2-1" ||
-        match.score === "1-0";
-      const winnerId = p1Wins ? match.player1Id : match.player2Id;
-      return winnerId;
+      const p1Wins = isP1Winner(match.score);
+      return p1Wins ? match.player1Id : match.player2Id;
     }
   }
   return null;
@@ -123,7 +180,9 @@ export function getStandings(tournament: Tournament): StandingRow[] {
       return {
         player,
         score: calculatePlayerScore(player.id, tournament),
-        omp: calculateOMP(player.id, tournament),
+        omw: calculateOMW(player.id, tournament),
+        woScore: calculateWOScore(player.id, tournament),
+        avomw: calculateAVOMW(player.id, tournament),
         wins: record.wins,
         losses: record.losses,
         byes: record.byes,
@@ -133,7 +192,9 @@ export function getStandings(tournament: Tournament): StandingRow[] {
 
   rows.sort((a, b) => {
     if (a.score !== b.score) return b.score - a.score;
-    if (a.omp !== b.omp) return b.omp - a.omp;
+    if (a.omw !== b.omw) return b.omw - a.omw;
+    if (a.woScore !== b.woScore) return b.woScore - a.woScore;
+    if (a.avomw !== b.avomw) return b.avomw - a.avomw;
     const winner = headToHeadWinner(a.player.id, b.player.id, tournament);
     if (winner === a.player.id) return -1;
     if (winner === b.player.id) return 1;

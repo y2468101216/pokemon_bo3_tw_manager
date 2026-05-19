@@ -199,7 +199,18 @@ function TournamentView() {
                 <th className="px-3 py-2 text-left">選手</th>
                 <th className="px-3 py-2 text-right">勝-負</th>
                 <th className="px-3 py-2 text-right">總分</th>
-                <th className="px-3 py-2 text-right">OMP</th>
+                <th className="px-3 py-2 text-right" title="平均對手勝率">
+                  OMW%
+                </th>
+                <th className="px-3 py-2 text-right" title="對手總積分">
+                  WOScore
+                </th>
+                <th
+                  className="px-3 py-2 text-right"
+                  title="對手的 OMW% 平均"
+                >
+                  AVOMW%
+                </th>
                 <th className="px-3 py-2 text-right">輪空</th>
               </tr>
             </thead>
@@ -227,7 +238,13 @@ function TournamentView() {
                       {row.score}
                     </td>
                     <td className="px-3 py-2 text-right tabular-nums text-zinc-400">
-                      {row.omp.toFixed(2)}
+                      {(row.omw * 100).toFixed(1)}%
+                    </td>
+                    <td className="px-3 py-2 text-right tabular-nums text-zinc-400">
+                      {row.woScore}
+                    </td>
+                    <td className="px-3 py-2 text-right tabular-nums text-zinc-400">
+                      {(row.avomw * 100).toFixed(1)}%
                     </td>
                     <td className="px-3 py-2 text-right tabular-nums text-zinc-400">
                       {row.byes}
