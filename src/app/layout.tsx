@@ -14,6 +14,11 @@ export default function RootLayout({
   return (
     <html lang="zh-TW" className="h-full antialiased">
       <body className="min-h-full flex flex-col bg-black text-zinc-100 font-sans">
+        <header className="border-b border-zinc-800">
+          <div className="max-w-5xl mx-auto px-6 py-5 text-center">
+            <span className="text-2xl font-bold tracking-wide">拉比卡牌</span>
+          </div>
+        </header>
         {children}
       </body>
     </html>
