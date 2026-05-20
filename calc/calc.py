@@ -24,7 +24,7 @@ import json
 
 CONFIG = {
     # ---- 賽事規模 ----
-    'n_players': 400,           # 報名人數
+    'n_players': 3036,          # 報名人數
     'day1_rounds': 9,           # Day1 BO1 輪數
     'day2_rounds': 5,           # Day2 BO3 輪數
     'max_losses_to_qualify': 2, # Day1 幾敗以內晉級 Day2
@@ -44,13 +44,13 @@ CONFIG = {
     'skill_std': 0.3,           # skill 模式下實力分布的標準差（越大差距越極端）
 
     # ---- 規則設定 ----
-    'rules_to_run': ['tpc', 'tpci'],  # 要跑哪幾套規則
+    'rules_to_run': ['tpc', 'tpci', 'pjcs'],  # 要跑哪幾套規則
 
     # ---- 隨機種子 ----
     'seed': 7777,               # 設 None 則每次跑都不同
 
     # ---- 輸出 ----
-    'output_json': 'results.json',
+    'output_json': 'results_pjcs.json',
     'print_js_format': True,    # 是否印出可貼進 HTML 的 JS 格式
 }
 
@@ -74,6 +74,15 @@ TPCI_RULES = {
     'score_2_0_win': 3, 'score_2_0_lose': 0,
     'score_2_1_win': 3, 'score_2_1_lose': 0,  # 贏就 3 分
     'score_timeout_each': 1,                  # 時間到雙方各 1 分
+    'day1_win': 3, 'day1_lose': 0,
+}
+
+# PJCS 規則（日本 PJCS：5-4-3-1-0）
+PJCS_RULES = {
+    'bye_score': 5,
+    'score_2_0_win': 5, 'score_2_0_lose': 0,
+    'score_2_1_win': 4, 'score_2_1_lose': 1,
+    'score_1_0_win': 3, 'score_1_0_lose': 0,  # 時間到 1-0
     'day1_win': 3, 'day1_lose': 0,
 }
 
@@ -183,6 +192,32 @@ def simulate_bo3_tpc(p1_skill, p2_skill, p_timeout):
             return (TPC_RULES['score_2_1_lose'], TPC_RULES['score_2_1_win'])
 
 
+def simulate_bo3_pjcs(p1_skill, p2_skill, p_timeout):
+    """PJCS 規則 BO3，回傳 (p1_分數, p2_分數)。"""
+    if random.random() < p_timeout:
+        p_win = win_probability(p1_skill, p2_skill)
+        if random.random() < p_win:
+            return (PJCS_RULES['score_1_0_win'], PJCS_RULES['score_1_0_lose'])
+        else:
+            return (PJCS_RULES['score_1_0_lose'], PJCS_RULES['score_1_0_win'])
+
+    p_win = win_probability(p1_skill, p2_skill)
+    g1_p1_wins = random.random() < p_win
+    g2_p1_wins = random.random() < p_win
+
+    if g1_p1_wins == g2_p1_wins:
+        if g1_p1_wins:
+            return (PJCS_RULES['score_2_0_win'], PJCS_RULES['score_2_0_lose'])
+        else:
+            return (PJCS_RULES['score_2_0_lose'], PJCS_RULES['score_2_0_win'])
+    else:
+        g3_p1_wins = random.random() < p_win
+        if g3_p1_wins:
+            return (PJCS_RULES['score_2_1_win'], PJCS_RULES['score_2_1_lose'])
+        else:
+            return (PJCS_RULES['score_2_1_lose'], PJCS_RULES['score_2_1_win'])
+
+
 def simulate_bo3_tpci(p1_skill, p2_skill, p_timeout):
     """TPCi 規則 BO3，回傳 (p1_分數, p2_分數)。"""
     if random.random() < p_timeout:
@@ -256,6 +291,9 @@ def simulate_day2(qualifiers, skills, n_rounds, rule, p_timeout):
     elif rule == 'tpci':
         bo3_fn = simulate_bo3_tpci
         bye_score = TPCI_RULES['bye_score']
+    elif rule == 'pjcs':
+        bo3_fn = simulate_bo3_pjcs
+        bye_score = PJCS_RULES['bye_score']
     else:
         raise ValueError(f"未知規則: {rule}")
     
@@ -429,8 +467,10 @@ def main(config=None):
         print("JS 格式（可貼進 HTML）")
         print("=" * 70)
         print("const DATA = {")
+        # HTML 內部 key 對應：tpc→pacs, tpci→mtg, pjcs→pjcs
+        rule_key_map = {'tpc': 'pacs', 'tpci': 'mtg', 'pjcs': 'pjcs'}
         for rule in config['rules_to_run']:
-            key = 'pacs' if rule == 'tpc' else 'mtg'  # 對應 HTML 內部 key
+            key = rule_key_map.get(rule, rule)
             print(f"  {key}: [")
             for d in data[rule]:
                 print(f"    {{p_timeout:{d['p_timeout']}, "

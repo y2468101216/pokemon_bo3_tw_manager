@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>PJCS vs TPC vs TPCi BO3 賽制公平性比較（3036 人版本）</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=JetBrains+Mono:wght@400;700&family=Bodoni+Moda:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #15110d;
+  --paper: #f4ede0;
+  --paper-deep: #ebe1d0;
+  --rule: #15110d;
+  --accent: #c93419;
+  --accent-dim: #8a2310;
+  --tpc-color: #c93419;
+  --tpci-color: #1f4d3f;
+  --pjcs-color: #2c3e6e;
+  --muted: #6d6253;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Noto Serif TC', serif;
+  line-height: 1.7;
+  padding: 60px 40px;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(21,17,13,0.015) 0px, rgba(21,17,13,0.015) 1px, transparent 1px, transparent 3px);
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* ===== 頁眉 ===== */
+.masthead {
+  border-top: 8px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+  padding: 18px 0 12px;
+  margin-bottom: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+}
+
+.masthead .vol { font-weight: 700; }
+.masthead .date { color: var(--muted); }
+
+/* ===== 大標題 ===== */
+.title-block {
+  margin-bottom: 60px;
+  position: relative;
+}
+
+.kicker {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  color: var(--accent);
+  margin-bottom: 24px;
+  font-weight: 700;
+}
+
+h1.title {
+  font-family: 'Bodoni Moda', 'Noto Serif TC', serif;
+  font-weight: 900;
+  font-size: clamp(48px, 6vw, 88px);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  margin-bottom: 24px;
+}
+
+h1.title em {
+  font-style: italic;
+  color: var(--pjcs-color);
+}
+
+.dek {
+  font-size: 20px;
+  line-height: 1.55;
+  max-width: 720px;
+  color: var(--muted);
+  border-left: 3px solid var(--pjcs-color);
+  padding-left: 20px;
+  margin-top: 32px;
+}
+
+/* ===== 模擬參數 ===== */
+.specs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  margin: 50px 0;
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+}
+
+.spec-item {
+  padding: 20px 16px;
+  border-right: 1px solid var(--ink);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.spec-item:last-child { border-right: none; }
+
+.spec-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.spec-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+/* ===== Section ===== */
+.section {
+  margin: 80px 0;
+}
+
+h2.section-title {
+  font-family: 'Bodoni Moda', 'Noto Serif TC', serif;
+  font-weight: 900;
+  font-size: 42px;
+  line-height: 1.1;
+  margin-bottom: 12px;
+  letter-spacing: -0.01em;
+}
+
+.section-number {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.2em;
+  margin-bottom: 16px;
+  font-weight: 700;
+}
+
+.section-intro {
+  font-size: 17px;
+  max-width: 720px;
+  margin-bottom: 40px;
+  color: var(--ink);
+}
+
+/* ===== 規則對照（三欄）===== */
+.rules-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0;
+  margin: 40px 0;
+  border-top: 2px solid var(--ink);
+  border-bottom: 2px solid var(--ink);
+}
+
+.rule-card {
+  padding: 28px 22px;
+  border-right: 1px solid var(--ink);
+  position: relative;
+}
+
+.rule-card:last-child { border-right: none; }
+
+.rule-card.pjcs { background: rgba(44, 62, 110, 0.05); }
+.rule-card.tpc  { background: rgba(201, 52, 25, 0.04); }
+.rule-card.tpci { background: rgba(31, 77, 63, 0.04); }
+
+.rule-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.rule-card.pjcs .rule-label { color: var(--pjcs-color); }
+.rule-card.tpc  .rule-label { color: var(--tpc-color); }
+.rule-card.tpci .rule-label { color: var(--tpci-color); }
+
+.rule-name {
+  font-family: 'Bodoni Moda', serif;
+  font-size: 28px;
+  font-weight: 900;
+  margin-bottom: 22px;
+}
+
+.rule-table {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  width: 100%;
+}
+
+.rule-table tr td {
+  padding: 7px 0;
+  border-bottom: 1px dotted rgba(21,17,13,0.2);
+}
+
+.rule-table tr:last-child td {
+  border-bottom: none;
+}
+
+.rule-table .result { color: var(--muted); }
+.rule-table .points { text-align: right; font-weight: 700; }
+
+/* ===== 圖表區 ===== */
+.chart-wrapper {
+  margin: 40px 0;
+  padding: 32px;
+  border: 1px solid var(--ink);
+  background: var(--paper);
+  position: relative;
+}
+
+.chart-title {
+  font-family: 'Bodoni Moda', serif;
+  font-weight: 700;
+  font-size: 22px;
+  margin-bottom: 8px;
+}
+
+.chart-subtitle {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: 28px;
+}
+
+.chart-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.legend {
+  display: flex;
+  gap: 22px;
+  margin-top: 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend-swatch {
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--ink);
+}
+
+/* ===== 大數字 callout（三欄）===== */
+.callout {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  margin: 40px 0;
+  border-top: 8px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+}
+
+.callout-cell {
+  padding: 32px 22px;
+  border-right: 1px solid var(--ink);
+}
+
+.callout-cell:last-child { border-right: none; }
+
+.callout-cell.pjcs { background: rgba(44, 62, 110, 0.07); }
+.callout-cell.tpc  { background: rgba(201, 52, 25, 0.06); }
+.callout-cell.tpci { background: rgba(31, 77, 63, 0.06); }
+
+.callout-rule {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.callout-cell.pjcs .callout-rule { color: var(--pjcs-color); }
+.callout-cell.tpc  .callout-rule { color: var(--tpc-color); }
+.callout-cell.tpci .callout-rule { color: var(--tpci-color); }
+
+.callout-number {
+  font-family: 'Bodoni Moda', serif;
+  font-size: 72px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  margin-bottom: 8px;
+}
+
+.callout-cell.pjcs .callout-number { color: var(--pjcs-color); }
+.callout-cell.tpc  .callout-number { color: var(--tpc-color); }
+.callout-cell.tpci .callout-number { color: var(--tpci-color); }
+
+.callout-label {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* ===== 數據表 ===== */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  margin: 32px 0;
+}
+
+.data-table th,
+.data-table td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid rgba(21,17,13,0.15);
+}
+
+.data-table th {
+  background: var(--ink);
+  color: var(--paper);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-size: 10px;
+  border-bottom: none;
+}
+
+.data-table tbody tr.pjcs-row { background: rgba(44, 62, 110, 0.05); }
+.data-table tbody tr.tpc-row  { background: rgba(201, 52, 25, 0.04); }
+.data-table tbody tr.tpci-row { background: rgba(31, 77, 63, 0.04); }
+
+.data-table td.label-cell {
+  font-weight: 700;
+}
+
+.data-table td.value-pjcs { color: var(--pjcs-color); font-weight: 700; }
+.data-table td.value-tpc  { color: var(--tpc-color);  font-weight: 700; }
+.data-table td.value-tpci { color: var(--tpci-color); font-weight: 700; }
+
+/* ===== 結論區 ===== */
+.verdict {
+  margin: 80px 0 40px;
+  padding: 48px 0;
+  border-top: 8px solid var(--ink);
+  border-bottom: 8px solid var(--ink);
+}
+
+.verdict-stamp {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--pjcs-color);
+  margin-bottom: 16px;
+  font-weight: 700;
+}
+
+.verdict-text {
+  font-family: 'Bodoni Moda', 'Noto Serif TC', serif;
+  font-weight: 700;
+  font-size: 36px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+.verdict-text em {
+  font-style: italic;
+  color: var(--pjcs-color);
+}
+
+.findings {
+  margin: 60px 0;
+}
+
+.finding {
+  display: grid;
+  grid-template-columns: 60px 1fr;
+  gap: 24px;
+  padding: 28px 0;
+  border-top: 1px solid var(--ink);
+}
+
+.finding:last-child {
+  border-bottom: 1px solid var(--ink);
+}
+
+.finding-num {
+  font-family: 'Bodoni Moda', serif;
+  font-size: 48px;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--pjcs-color);
+}
+
+.finding-body h3 {
+  font-family: 'Bodoni Moda', 'Noto Serif TC', serif;
+  font-weight: 700;
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+
+.finding-body p {
+  font-size: 16px;
+  color: var(--ink);
+}
+
+.finding-body p + p {
+  margin-top: 10px;
+}
+
+/* ===== 頁尾 ===== */
+.footer {
+  margin-top: 80px;
+  padding-top: 24px;
+  border-top: 1px solid var(--ink);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  text-align: center;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ===== 互動 slider ===== */
+.scenario-selector {
+  margin: 32px 0;
+  padding: 24px;
+  border: 1px solid var(--ink);
+  background: var(--paper-deep);
+}
+
+.selector-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  margin-bottom: 16px;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.scenario-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.scenario-btn {
+  padding: 10px 18px;
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  letter-spacing: 0.05em;
+}
+
+.scenario-btn:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.scenario-btn.active {
+  background: var(--pjcs-color);
+  color: var(--paper);
+  border-color: var(--pjcs-color);
+}
+
+/* ===== Logo ===== */
+.brand-logo {
+  display: flex;
+  justify-content: center;
+  margin: 0 0 40px;
+}
+
+.brand-logo.bottom {
+  margin: 60px 0 0;
+}
+
+.brand-logo img {
+  width: 120px;
+  height: 120px;
+  display: block;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  body { padding: 30px 20px; }
+  .specs { grid-template-columns: repeat(2, 1fr); }
+  .spec-item:nth-child(2) { border-right: none; }
+  .spec-item:nth-child(1),
+  .spec-item:nth-child(2) { border-bottom: 1px solid var(--ink); }
+  .rules-grid { grid-template-columns: 1fr; }
+  .rule-card { border-right: none; border-bottom: 1px solid var(--ink); }
+  .rule-card:last-child { border-bottom: none; }
+  .callout { grid-template-columns: 1fr; }
+  .callout-cell { border-right: none; border-bottom: 1px solid var(--ink); }
+  .callout-cell:last-child { border-bottom: none; }
+  .verdict-text { font-size: 24px; }
+  h1.title { font-size: 44px; }
+  h2.section-title { font-size: 30px; }
+  .callout-number { font-size: 52px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="brand-logo">
+    <img src="../image/labytcg-logo.png" alt="LabyTCG 拉比卡牌">
+  </div>
+
+  <div class="masthead">
+    <span class="vol">SIMULATION DOSSIER / N°03</span>
+    <span class="date">3036-PLAYER MONTE CARLO · N=4000 · PJCS VARIANT</span>
+  </div>
+
+  <div class="title-block">
+    <div class="kicker">Tournament Format Analysis · PJCS Variant</div>
+    <h1 class="title">PJCS 把分數降到 5-4-3，<em>問題並沒有消失</em></h1>
+    <p class="dek">
+      日本 PJCS 把 TPC 的「6-5-3」BO3 計分壓低成「5-4-3」、Bye 從 6 降到 5。
+      看似往 TPCi 的「3-1-0」標準靠攏——
+      但在 3036 人賽事下，<br>
+      <strong>Day1 第一名晉級率只比 TPC 多 4-5 個百分點，
+      Bye 紅利反而還更大。</strong>
+    </p>
+  </div>
+
+  <!-- 模擬參數 -->
+  <div class="specs">
+    <div class="spec-item">
+      <div class="spec-label">參賽人數</div>
+      <div class="spec-value">3036</div>
+    </div>
+    <div class="spec-item">
+      <div class="spec-label">Day1 / Day2 輪數</div>
+      <div class="spec-value">9 / 5</div>
+    </div>
+    <div class="spec-item">
+      <div class="spec-label">晉級門檻</div>
+      <div class="spec-value">≤2 敗</div>
+    </div>
+    <div class="spec-item">
+      <div class="spec-label">每場勝率</div>
+      <div class="spec-value">50/50</div>
+    </div>
+  </div>
+
+  <!-- Section 1: 規則對照 -->
+  <div class="section">
+    <div class="section-number">SECTION 01</div>
+    <h2 class="section-title">三套規則，<br>同一個 BO3</h2>
+    <p class="section-intro">
+      PJCS 看起來像 TPC 的縮小版——分數從 6/5/3 降到 5/4/3、Bye 從 6 降到 5。
+      但是「贏一場 BO3 就是 5 分，輸的還能拿 1 分」這個結構性決定
+      沒有改變，Bye 仍等同 BO3 滿分。
+      TPCi 則徹底拋棄局數差，主分數只有 3/1/0。
+    </p>
+
+    <div class="rules-grid">
+      <div class="rule-card pjcs">
+        <div class="rule-label">RULE C · 本期主角</div>
+        <div class="rule-name">PJCS</div>
+        <table class="rule-table">
+          <tr><td class="result">BO3 贏 2-0</td><td class="points">5 / 0</td></tr>
+          <tr><td class="result">BO3 贏 2-1</td><td class="points">4 / 1</td></tr>
+          <tr><td class="result">時間到 1-0</td><td class="points">3 / 0</td></tr>
+          <tr><td class="result">輪空 (Bye)</td><td class="points">5</td></tr>
+        </table>
+      </div>
+      <div class="rule-card tpc">
+        <div class="rule-label">RULE A · TPC</div>
+        <div class="rule-name">TPC</div>
+        <table class="rule-table">
+          <tr><td class="result">BO3 贏 2-0</td><td class="points">6 / 0</td></tr>
+          <tr><td class="result">BO3 贏 2-1</td><td class="points">5 / 1</td></tr>
+          <tr><td class="result">時間到 1-0</td><td class="points">3 / 0</td></tr>
+          <tr><td class="result">輪空 (Bye)</td><td class="points">6</td></tr>
+        </table>
+      </div>
+      <div class="rule-card tpci">
+        <div class="rule-label">RULE B · TPCi</div>
+        <div class="rule-name">TPCi</div>
+        <table class="rule-table">
+          <tr><td class="result">BO3 贏 (任何比數)</td><td class="points">3 / 0</td></tr>
+          <tr><td class="result">時間到平手</td><td class="points">1 / 1</td></tr>
+          <tr><td class="result">輪空 (Bye)</td><td class="points">3</td></tr>
+          <tr><td class="result">局數差異</td><td class="points">→ Tiebreaker</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 2: 場景選擇 + 比較 -->
+  <div class="section">
+    <div class="section-number">SECTION 02</div>
+    <h2 class="section-title">降分沒有<br>降溫</h2>
+    <p class="section-intro">
+      在 3036 人尺度下，PJCS 在「Day1 第一名晉級率」與「Bye 紅利」兩個指標上
+      都緊跟 TPC，沒接近 TPCi。
+      下方場景按鈕可切換不同超時率，觀察三套制度下
+      <strong>Day1 第一名</strong>與<strong>Day1 末位晉級者</strong>
+      晉級 Top 8 的機率變化。
+    </p>
+
+    <div class="scenario-selector">
+      <div class="selector-label">超時率情境</div>
+      <div class="scenario-buttons">
+        <button class="scenario-btn" data-idx="0">0% · 沒有超時</button>
+        <button class="scenario-btn" data-idx="1">5% · 快環境</button>
+        <button class="scenario-btn active" data-idx="2">15% · 中等</button>
+        <button class="scenario-btn" data-idx="3">25% · 慢環境</button>
+        <button class="scenario-btn" data-idx="4">40% · 極慢</button>
+      </div>
+    </div>
+
+    <!-- Callout 大數字 -->
+    <div class="callout">
+      <div class="callout-cell pjcs">
+        <div class="callout-rule">PJCS · Day1 第一名 Top8 率</div>
+        <div class="callout-number" id="pjcs-first">--%</div>
+        <div class="callout-label">把分數壓低後僅微幅優於 TPC</div>
+      </div>
+      <div class="callout-cell tpc">
+        <div class="callout-rule">TPC · Day1 第一名 Top8 率</div>
+        <div class="callout-number" id="tpc-first">--%</div>
+        <div class="callout-label">同樣把局數塞進主分數，訊號被稀釋</div>
+      </div>
+      <div class="callout-cell tpci">
+        <div class="callout-rule">TPCi · Day1 第一名 Top8 率</div>
+        <div class="callout-number" id="tpci-first">--%</div>
+        <div class="callout-label">主分數乾淨，Day1 領先真正被保留</div>
+      </div>
+    </div>
+
+    <!-- 圖：第一名 Top8 率 -->
+    <div class="chart-wrapper">
+      <div class="chart-title">Day1 第一名晉級 Top 8 的機率</div>
+      <div class="chart-subtitle">FIG. 1 — FIRST SEED'S TOP8 RATE BY TIMEOUT RATE</div>
+      <svg class="chart-svg" id="chart1" viewBox="0 0 800 360"></svg>
+      <div class="legend">
+        <div class="legend-item"><span class="legend-swatch" style="background:#2c3e6e"></span> PJCS（5-4-3）</div>
+        <div class="legend-item"><span class="legend-swatch" style="background:#c93419"></span> TPC（6-5-3）</div>
+        <div class="legend-item"><span class="legend-swatch" style="background:#1f4d3f"></span> TPCi（3-1-0）</div>
+      </div>
+    </div>
+
+    <!-- 圖：末位 Top8 率 + 有 Bye / 沒 Bye -->
+    <div class="chart-wrapper">
+      <div class="chart-title">Day1 末位晉級者 Top 8 的機率：有 Bye vs 沒 Bye</div>
+      <div class="chart-subtitle">FIG. 2 — LAST QUALIFIER'S TOP8 RATE, CONDITIONAL ON RECEIVING A BYE</div>
+      <svg class="chart-svg" id="chart2" viewBox="0 0 800 420"></svg>
+      <div class="legend">
+        <div class="legend-item"><span class="legend-swatch" style="background:#2c3e6e"></span> PJCS</div>
+        <div class="legend-item"><span class="legend-swatch" style="background:#c93419"></span> TPC</div>
+        <div class="legend-item"><span class="legend-swatch" style="background:#1f4d3f"></span> TPCi</div>
+        <div class="legend-item"><span class="legend-swatch" style="background:#15110d"></span> 有拿 Bye</div>
+        <div class="legend-item"><span class="legend-swatch" style="background:transparent;border:2px dashed #15110d"></span> 沒拿 Bye</div>
+      </div>
+    </div>
+
+    <!-- 完整數據表 -->
+    <h3 style="font-family:'Bodoni Moda',serif;font-size:24px;margin-top:48px;margin-bottom:16px;">完整數據</h3>
+    <table class="data-table" id="data-table">
+      <thead>
+        <tr>
+          <th>規則</th>
+          <th>超時率</th>
+          <th>第一名 Top8</th>
+          <th>末位 Top8</th>
+          <th>末位 Bye 率</th>
+          <th>有 Bye→Top8</th>
+          <th>沒 Bye→Top8</th>
+          <th>Bye 紅利</th>
+        </tr>
+      </thead>
+      <tbody id="data-tbody"></tbody>
+    </table>
+  </div>
+
+  <!-- Section 3: 結論 -->
+  <div class="section">
+    <div class="verdict">
+      <div class="verdict-stamp">VERDICT</div>
+      <div class="verdict-text">
+        把 6-5-3 降到 5-4-3 後，PJCS 的 Day1 第一名 Top8 率從 TPC 的<em> 15-17% </em>
+        提升到<em> 19-21%</em>——仍與 TPCi 的<em> 27-38% </em>差距巨大。
+        Bye 紅利在 PJCS 反而擴大到<em> +2.2 ~ +3.9pp</em>。
+        降分不等於降低結構性問題。
+      </div>
+    </div>
+
+    <div class="findings">
+      <div class="finding">
+        <div class="finding-num">01</div>
+        <div class="finding-body">
+          <h3>PJCS 不是 TPC 跟 TPCi 之間的折衷</h3>
+          <p>
+            單看分數梯度（5-4-3 vs 6-5-3 vs 3-1-0），會直覺以為 PJCS 介於 TPC 與 TPCi 中間。
+            但在 3036 人模擬下，PJCS 的 Day1 第一名 Top8 率（18.8-21.4%）只比 TPC（15.4-17.3%）
+            高 4-5 個百分點，距離 TPCi（27.4-38.2%）還有 7-17 個百分點的鴻溝。
+            <strong>PJCS 在數學結構上仍屬於「TPC 家族」</strong>。
+          </p>
+        </div>
+      </div>
+      <div class="finding">
+        <div class="finding-num">02</div>
+        <div class="finding-body">
+          <h3>降低分數差距沒有降低 Bye 紅利</h3>
+          <p>
+            PJCS 的 Bye 紅利在五種超時率下落在 +2.2 ~ +3.9pp——
+            跟 TPC 的 +2.4 ~ +3.3pp 同檔，在慢環境（25% / 40%）下甚至更大。
+            TPCi 同條件只有 +0.6 ~ +1.3pp。
+            <strong>把 Bye 從 6 分降到 5 分沒用，因為 5 分仍等同 BO3 滿分</strong>。
+          </p>
+        </div>
+      </div>
+      <div class="finding">
+        <div class="finding-num">03</div>
+        <div class="finding-body">
+          <h3>為什麼降分沒效</h3>
+          <p>
+            TPC 與 PJCS 共有兩個結構性決定：(1) 把局數差塞進主分數
+            （2-0 跟 2-1 不同分），(2) Bye 等同 BO3 滿分。
+            這兩點才是 Day1 訊號被稀釋與 Bye 變成捷徑的根因。
+            5/4/3 比 6/5/3 只是把所有數值同步等比例縮小，
+            <strong>結構沒改、結果就不會改</strong>。
+          </p>
+        </div>
+      </div>
+      <div class="finding">
+        <div class="finding-num">04</div>
+        <div class="finding-body">
+          <h3>TPCi 是質的差異，不是量的差異</h3>
+          <p>
+            TPCi 把局數差完全踢出主分數（贏一場 3 分、不管 2-0 或 2-1），
+            而且 Bye 只值正常勝場的 3 分。
+            這兩個結構性改變才是 Bye 紅利掉到 +1pp 以下的真正原因。
+            想要解決 Bye 紅利問題，<strong>必須改規則的「形狀」，不是改規則的「大小」</strong>。
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    SIMULATION · 3036 PLAYERS × 4000 RUNS · ASSUMPTIONS: 50/50 WIN RATE · SWISS PAIRING · BYE TO LOWEST-SCORE GROUP · NO TIEBREAKER MODELED
+  </div>
+
+  <div class="brand-logo bottom">
+    <img src="../image/labytcg-logo.png" alt="LabyTCG 拉比卡牌">
+  </div>
+</div>
+
+<script>
+// 載入模擬資料（3036 人版本，三制對比，n_sims=4000，seed=7777）
+const DATA = {
+  pjcs: [
+    {p_timeout:0.0,  first_top8:20.65, last_top8:2.75, last_bye_rate:51.65, last_top8_with_bye:3.87, last_top8_no_bye:1.55, bye_advantage_pp:2.32},
+    {p_timeout:0.05, first_top8:18.77, last_top8:2.97, last_bye_rate:50.98, last_top8_with_bye:4.07, last_top8_no_bye:1.84, bye_advantage_pp:2.23},
+    {p_timeout:0.15, first_top8:20.32, last_top8:3.67, last_bye_rate:52.65, last_top8_with_bye:5.27, last_top8_no_bye:1.90, bye_advantage_pp:3.37},
+    {p_timeout:0.25, first_top8:20.67, last_top8:3.17, last_bye_rate:50.82, last_top8_with_bye:5.07, last_top8_no_bye:1.22, bye_advantage_pp:3.85},
+    {p_timeout:0.40, first_top8:21.40, last_top8:2.77, last_bye_rate:51.23, last_top8_with_bye:4.59, last_top8_no_bye:0.87, bye_advantage_pp:3.72}
+  ],
+  tpc: [
+    {p_timeout:0.0,  first_top8:17.32, last_top8:3.20, last_bye_rate:51.42, last_top8_with_bye:4.38, last_top8_no_bye:1.96, bye_advantage_pp:2.42},
+    {p_timeout:0.05, first_top8:16.48, last_top8:3.43, last_bye_rate:50.88, last_top8_with_bye:4.67, last_top8_no_bye:2.14, bye_advantage_pp:2.53},
+    {p_timeout:0.15, first_top8:15.82, last_top8:3.40, last_bye_rate:51.38, last_top8_with_bye:4.82, last_top8_no_bye:1.90, bye_advantage_pp:2.92},
+    {p_timeout:0.25, first_top8:15.38, last_top8:3.23, last_bye_rate:49.20, last_top8_with_bye:4.83, last_top8_no_bye:1.67, bye_advantage_pp:3.15},
+    {p_timeout:0.40, first_top8:15.60, last_top8:3.77, last_bye_rate:53.40, last_top8_with_bye:5.29, last_top8_no_bye:2.04, bye_advantage_pp:3.25}
+  ],
+  tpci: [
+    {p_timeout:0.0,  first_top8:27.40, last_top8:1.50, last_bye_rate:49.35, last_top8_with_bye:1.93, last_top8_no_bye:1.09, bye_advantage_pp:0.84},
+    {p_timeout:0.05, first_top8:29.98, last_top8:1.55, last_bye_rate:50.52, last_top8_with_bye:2.18, last_top8_no_bye:0.91, bye_advantage_pp:1.27},
+    {p_timeout:0.15, first_top8:32.48, last_top8:1.55, last_bye_rate:52.02, last_top8_with_bye:2.11, last_top8_no_bye:0.94, bye_advantage_pp:1.18},
+    {p_timeout:0.25, first_top8:34.33, last_top8:1.23, last_bye_rate:50.30, last_top8_with_bye:1.54, last_top8_no_bye:0.91, bye_advantage_pp:0.64},
+    {p_timeout:0.40, first_top8:38.20, last_top8:1.10, last_bye_rate:51.70, last_top8_with_bye:1.64, last_top8_no_bye:0.52, bye_advantage_pp:1.13}
+  ]
+};
+
+const TIMEOUTS = ['0%','5%','15%','25%','40%'];
+const PJCS_COLOR = '#2c3e6e';
+const TPC_COLOR  = '#c93419';
+const TPCI_COLOR = '#1f4d3f';
+
+// 圖表 Y 軸範圍
+const Y1_MAX = 50;   // 圖 1：第一名 Top8 率（max ~38%）
+const Y1_STEP = 10;
+const Y2_MAX = 8;    // 圖 2：末位條件機率（max ~5.3%）
+const Y2_STEP = 2;
+
+let currentIdx = 2;
+
+// 更新 callout
+function updateCallout() {
+  document.getElementById('pjcs-first').textContent = DATA.pjcs[currentIdx].first_top8.toFixed(1) + '%';
+  document.getElementById('tpc-first').textContent  = DATA.tpc[currentIdx].first_top8.toFixed(1) + '%';
+  document.getElementById('tpci-first').textContent = DATA.tpci[currentIdx].first_top8.toFixed(1) + '%';
+}
+
+// === 圖 1：第一名 Top8 率（三條折線） ===
+function drawChart1() {
+  const svg = document.getElementById('chart1');
+  svg.innerHTML = '';
+
+  const W = 800, H = 360;
+  const ml = 70, mr = 40, mt = 30, mb = 60;
+  const cw = W - ml - mr;
+  const ch = H - mt - mb;
+
+  const xs = TIMEOUTS.map((_,i) => ml + (cw / (TIMEOUTS.length-1)) * i);
+
+  // 格線
+  for (let y = 0; y <= Y1_MAX; y += Y1_STEP) {
+    const yPos = mt + ch - (y/Y1_MAX) * ch;
+    const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1', ml);
+    line.setAttribute('x2', W - mr);
+    line.setAttribute('y1', yPos);
+    line.setAttribute('y2', yPos);
+    line.setAttribute('stroke', '#15110d');
+    line.setAttribute('stroke-opacity', y === 0 ? '1' : '0.1');
+    line.setAttribute('stroke-width', y === 0 ? '1.5' : '1');
+    svg.appendChild(line);
+
+    const label = document.createElementNS('http://www.w3.org/2000/svg','text');
+    label.setAttribute('x', ml - 12);
+    label.setAttribute('y', yPos + 4);
+    label.setAttribute('text-anchor', 'end');
+    label.setAttribute('font-family', 'JetBrains Mono, monospace');
+    label.setAttribute('font-size', '11');
+    label.setAttribute('fill', '#6d6253');
+    label.textContent = y + '%';
+    svg.appendChild(label);
+  }
+
+  // X 軸標籤
+  TIMEOUTS.forEach((t, i) => {
+    const x = xs[i];
+    const label = document.createElementNS('http://www.w3.org/2000/svg','text');
+    label.setAttribute('x', x);
+    label.setAttribute('y', H - mb + 22);
+    label.setAttribute('text-anchor', 'middle');
+    label.setAttribute('font-family', 'JetBrains Mono, monospace');
+    label.setAttribute('font-size', '11');
+    label.setAttribute('fill', '#6d6253');
+    label.textContent = t;
+    svg.appendChild(label);
+  });
+
+  // X 軸 title
+  const xtitle = document.createElementNS('http://www.w3.org/2000/svg','text');
+  xtitle.setAttribute('x', ml + cw/2);
+  xtitle.setAttribute('y', H - 10);
+  xtitle.setAttribute('text-anchor', 'middle');
+  xtitle.setAttribute('font-family', 'JetBrains Mono, monospace');
+  xtitle.setAttribute('font-size', '10');
+  xtitle.setAttribute('fill', '#15110d');
+  xtitle.setAttribute('letter-spacing', '0.15em');
+  xtitle.textContent = 'TIMEOUT RATE';
+  svg.appendChild(xtitle);
+
+  // 畫線
+  function drawLine(data, color, key, labelAbove) {
+    const pts = data.map((d, i) => `${xs[i]},${mt + ch - (d[key]/Y1_MAX) * ch}`).join(' ');
+    const poly = document.createElementNS('http://www.w3.org/2000/svg','polyline');
+    poly.setAttribute('points', pts);
+    poly.setAttribute('stroke', color);
+    poly.setAttribute('stroke-width', '3');
+    poly.setAttribute('fill', 'none');
+    svg.appendChild(poly);
+
+    data.forEach((d, i) => {
+      const cx = xs[i], cy = mt + ch - (d[key]/Y1_MAX) * ch;
+      const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      c.setAttribute('cx', cx);
+      c.setAttribute('cy', cy);
+      c.setAttribute('r', i === currentIdx ? 8 : 5);
+      c.setAttribute('fill', color);
+      c.setAttribute('stroke', '#f4ede0');
+      c.setAttribute('stroke-width', '2');
+      svg.appendChild(c);
+
+      const lbl = document.createElementNS('http://www.w3.org/2000/svg','text');
+      lbl.setAttribute('x', cx);
+      lbl.setAttribute('y', labelAbove ? cy - 14 : cy + 22);
+      lbl.setAttribute('text-anchor', 'middle');
+      lbl.setAttribute('font-family', 'JetBrains Mono, monospace');
+      lbl.setAttribute('font-size', i === currentIdx ? '13' : '11');
+      lbl.setAttribute('font-weight', i === currentIdx ? '700' : '400');
+      lbl.setAttribute('fill', color);
+      lbl.textContent = d[key].toFixed(1);
+      svg.appendChild(lbl);
+    });
+  }
+
+  // 由上到下畫：TPCi（最高，標籤往上）、PJCS（中間，標籤往下）、TPC（最低，標籤往下）
+  drawLine(DATA.tpci, TPCI_COLOR, 'first_top8', true);
+  drawLine(DATA.pjcs, PJCS_COLOR, 'first_top8', false);
+  drawLine(DATA.tpc,  TPC_COLOR,  'first_top8', false);
+
+  // 高亮當前 idx
+  const hlx = xs[currentIdx];
+  const hl = document.createElementNS('http://www.w3.org/2000/svg','line');
+  hl.setAttribute('x1', hlx);
+  hl.setAttribute('x2', hlx);
+  hl.setAttribute('y1', mt);
+  hl.setAttribute('y2', mt + ch);
+  hl.setAttribute('stroke', '#15110d');
+  hl.setAttribute('stroke-width', '1');
+  hl.setAttribute('stroke-dasharray', '3 3');
+  hl.setAttribute('stroke-opacity', '0.3');
+  svg.insertBefore(hl, svg.firstChild);
+}
+
+// === 圖 2：末位 有 Bye / 沒 Bye 條件機率（三制 × 兩條件 = 6 柱 / 組） ===
+function drawChart2() {
+  const svg = document.getElementById('chart2');
+  svg.innerHTML = '';
+
+  const W = 800, H = 420;
+  const ml = 70, mr = 30, mt = 30, mb = 80;
+  const cw = W - ml - mr;
+  const ch = H - mt - mb;
+
+  const nGroup = TIMEOUTS.length;
+  const groupW = cw / nGroup;
+  const barW = (groupW - 14) / 6;
+
+  // Y 軸 0-Y2_MAX
+  for (let y = 0; y <= Y2_MAX; y += Y2_STEP) {
+    const yPos = mt + ch - (y/Y2_MAX) * ch;
+    const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1', ml);
+    line.setAttribute('x2', W - mr);
+    line.setAttribute('y1', yPos);
+    line.setAttribute('y2', yPos);
+    line.setAttribute('stroke', '#15110d');
+    line.setAttribute('stroke-opacity', y === 0 ? '1' : '0.1');
+    line.setAttribute('stroke-width', y === 0 ? '1.5' : '1');
+    svg.appendChild(line);
+
+    const label = document.createElementNS('http://www.w3.org/2000/svg','text');
+    label.setAttribute('x', ml - 12);
+    label.setAttribute('y', yPos + 4);
+    label.setAttribute('text-anchor', 'end');
+    label.setAttribute('font-family', 'JetBrains Mono, monospace');
+    label.setAttribute('font-size', '11');
+    label.setAttribute('fill', '#6d6253');
+    label.textContent = y + '%';
+    svg.appendChild(label);
+  }
+
+  // 畫柱
+  TIMEOUTS.forEach((t, i) => {
+    const gx = ml + groupW * i + 7;
+    const isActive = i === currentIdx;
+
+    const bars = [
+      { x: gx,          v: DATA.pjcs[i].last_top8_with_bye, color: PJCS_COLOR, fill: true  },
+      { x: gx + barW,   v: DATA.pjcs[i].last_top8_no_bye,   color: PJCS_COLOR, fill: false },
+      { x: gx + barW*2, v: DATA.tpc[i].last_top8_with_bye,  color: TPC_COLOR,  fill: true  },
+      { x: gx + barW*3, v: DATA.tpc[i].last_top8_no_bye,    color: TPC_COLOR,  fill: false },
+      { x: gx + barW*4, v: DATA.tpci[i].last_top8_with_bye, color: TPCI_COLOR, fill: true  },
+      { x: gx + barW*5, v: DATA.tpci[i].last_top8_no_bye,   color: TPCI_COLOR, fill: false }
+    ];
+
+    bars.forEach((b, bi) => {
+      const h = (b.v/Y2_MAX) * ch;
+      const r = document.createElementNS('http://www.w3.org/2000/svg','rect');
+      r.setAttribute('x', b.x);
+      r.setAttribute('y', mt + ch - h);
+      r.setAttribute('width', barW - 1.5);
+      r.setAttribute('height', h);
+      r.setAttribute('fill', b.fill ? b.color : 'transparent');
+      r.setAttribute('stroke', b.color);
+      r.setAttribute('stroke-width', '1.8');
+      if (!b.fill) r.setAttribute('stroke-dasharray', '3 2');
+      r.setAttribute('opacity', isActive ? '1' : '0.5');
+      svg.appendChild(r);
+
+      if (isActive) {
+        const tx = document.createElementNS('http://www.w3.org/2000/svg','text');
+        tx.setAttribute('x', b.x + (barW-1.5)/2);
+        tx.setAttribute('y', mt + ch - h - 4);
+        tx.setAttribute('text-anchor', 'middle');
+        tx.setAttribute('font-family', 'JetBrains Mono, monospace');
+        tx.setAttribute('font-size', '9');
+        tx.setAttribute('font-weight', '700');
+        tx.setAttribute('fill', b.color);
+        tx.textContent = b.v.toFixed(2);
+        svg.appendChild(tx);
+      }
+    });
+
+    // 組標籤
+    const glbl = document.createElementNS('http://www.w3.org/2000/svg','text');
+    glbl.setAttribute('x', ml + groupW * i + groupW/2);
+    glbl.setAttribute('y', H - mb + 22);
+    glbl.setAttribute('text-anchor', 'middle');
+    glbl.setAttribute('font-family', 'JetBrains Mono, monospace');
+    glbl.setAttribute('font-size', '11');
+    glbl.setAttribute('fill', isActive ? '#15110d' : '#6d6253');
+    glbl.setAttribute('font-weight', isActive ? '700' : '400');
+    glbl.textContent = t;
+    svg.appendChild(glbl);
+  });
+
+  // X 軸 title
+  const xtitle = document.createElementNS('http://www.w3.org/2000/svg','text');
+  xtitle.setAttribute('x', ml + cw/2);
+  xtitle.setAttribute('y', H - 30);
+  xtitle.setAttribute('text-anchor', 'middle');
+  xtitle.setAttribute('font-family', 'JetBrains Mono, monospace');
+  xtitle.setAttribute('font-size', '10');
+  xtitle.setAttribute('fill', '#15110d');
+  xtitle.setAttribute('letter-spacing', '0.15em');
+  xtitle.textContent = 'TIMEOUT RATE';
+  svg.appendChild(xtitle);
+}
+
+// === 數據表 ===
+function drawTable() {
+  const tbody = document.getElementById('data-tbody');
+  tbody.innerHTML = '';
+
+  TIMEOUTS.forEach((t, i) => {
+    ['PJCS','TPC','TPCi'].forEach((rule) => {
+      const dataKey = rule.toLowerCase();
+      const d = DATA[dataKey][i];
+      const tr = document.createElement('tr');
+      tr.className = dataKey + '-row';
+      if (i === currentIdx) tr.style.fontWeight = '700';
+
+      const colorClass = 'value-' + dataKey;
+      tr.innerHTML = `
+        <td class="label-cell ${colorClass}">${rule}</td>
+        <td>${t}</td>
+        <td>${d.first_top8.toFixed(2)}%</td>
+        <td>${d.last_top8.toFixed(2)}%</td>
+        <td>${d.last_bye_rate.toFixed(1)}%</td>
+        <td>${d.last_top8_with_bye.toFixed(2)}%</td>
+        <td>${d.last_top8_no_bye.toFixed(2)}%</td>
+        <td>+${d.bye_advantage_pp.toFixed(1)}pp</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  });
+}
+
+// === 切換 ===
+function update() {
+  updateCallout();
+  drawChart1();
+  drawChart2();
+  drawTable();
+  document.querySelectorAll('.scenario-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', i === currentIdx);
+  });
+}
+
+document.querySelectorAll('.scenario-btn').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    currentIdx = parseInt(btn.dataset.idx);
+    update();
+  });
+});
+
+update();
+</script>
+</body>
+</html>
