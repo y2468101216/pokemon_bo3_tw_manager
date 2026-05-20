@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
-<title>TPC vs TPCi 賽制公平性比較</title>
+<title>TPC vs TPCi BO3 賽制公平性比較</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -488,6 +488,23 @@ h2.section-title {
   border-color: var(--accent);
 }
 
+/* ===== Logo ===== */
+.brand-logo {
+  display: flex;
+  justify-content: center;
+  margin: 0 0 40px;
+}
+
+.brand-logo.bottom {
+  margin: 60px 0 0;
+}
+
+.brand-logo img {
+  width: 120px;
+  height: 120px;
+  display: block;
+}
+
 /* Mobile */
 @media (max-width: 768px) {
   body { padding: 30px 20px; }
@@ -511,6 +528,10 @@ h2.section-title {
 <body>
 <div class="container">
 
+  <div class="brand-logo">
+    <img src="../image/labytcg-logo.png" alt="LabyTCG 拉比卡牌">
+  </div>
+
   <div class="masthead">
     <span class="vol">SIMULATION DOSSIER / N°01</span>
     <span class="date">400-PLAYER MONTE CARLO · N=4000</span>
@@ -518,7 +539,7 @@ h2.section-title {
 
   <div class="title-block">
     <div class="kicker">Tournament Format Analysis</div>
-    <h1 class="title">當<em>計分方式</em>變成<br>晉級問題</h1>
+    <h1 class="title">Day1 打到第一名，為什麼只剩一半機率進 Top 8？</h1>
     <p class="dek">
       把 TPC 大師球聯盟賽的「6-5-3-1-0」BO3 計分系統，
       跟 TPCi BO3 的「3-1-0」標準制度
@@ -732,6 +753,10 @@ h2.section-title {
 
   <div class="footer">
     SIMULATION · 400 PLAYERS × 4000 RUNS · ASSUMPTIONS: 50/50 WIN RATE · SWISS PAIRING · BYE TO LOWEST-SCORE GROUP · NO TIEBREAKER MODELED
+  </div>
+
+  <div class="brand-logo bottom">
+    <img src="../image/labytcg-logo.png" alt="LabyTCG 拉比卡牌">
   </div>
 </div>
 
@@ -991,15 +1016,16 @@ function drawTable() {
   tbody.innerHTML = '';
   
   TIMEOUTS.forEach((t, i) => {
-    ['pacs','mtg'].forEach(rule => {
-      const d = DATA[rule][i];
+    ['TPC','TPCI'].forEach((rule, ri) => {
+      const dataKey = ri === 0 ? 'pacs' : 'mtg';
+      const d = DATA[dataKey][i];
       const tr = document.createElement('tr');
-      tr.className = rule + '-row';
+      tr.className = dataKey + '-row';
       if (i === currentIdx) tr.style.fontWeight = '700';
-      
-      const colorClass = rule === 'pacs' ? 'value-pacs' : 'value-mtg';
+
+      const colorClass = dataKey === 'pacs' ? 'value-pacs' : 'value-mtg';
       tr.innerHTML = `
-        <td class="label-cell ${colorClass}">${rule.toUpperCase()}</td>
+        <td class="label-cell ${colorClass}">${rule}</td>
         <td>${t}</td>
         <td>${d.first_top8.toFixed(2)}%</td>
         <td>${d.last_top8.toFixed(2)}%</td>
