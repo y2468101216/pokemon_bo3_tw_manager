@@ -534,16 +534,16 @@ h2.section-title {
 
   <div class="masthead">
     <span class="vol">SIMULATION DOSSIER / N°01</span>
-    <span class="date">400-PLAYER MONTE CARLO · N=4000</span>
+    <span class="date">3036-PLAYER MONTE CARLO · N=4000</span>
   </div>
 
   <div class="title-block">
     <div class="kicker">Tournament Format Analysis</div>
-    <h1 class="title">Day1 打到第一名，為什麼只剩<em>一半機率</em>進 Top 8？</h1>
+    <h1 class="title">Day1 打到第一名，為什麼只剩<em>1/6 機率</em>進 Top 8？</h1>
     <p class="dek">
       把 TPC 大師球聯盟賽的「6-5-3-1-0」BO3 計分系統，
       跟 TPCi BO3 的「3-1-0」標準制度
-      丟進同一個 400 人賽事模型，用四千次模擬看出兩件事——<br>
+      丟進同一個 3036 人賽事模型，用四千次模擬看出兩件事——<br>
       <strong>Day1 第一名的努力值多少，以及 Day1 末位的運氣值多少。</strong>
     </p>
   </div>
@@ -552,7 +552,7 @@ h2.section-title {
   <div class="specs">
     <div class="spec-item">
       <div class="spec-label">參賽人數</div>
-      <div class="spec-value">400</div>
+      <div class="spec-value">3036</div>
     </div>
     <div class="spec-item">
       <div class="spec-label">Day1 / Day2 輪數</div>
@@ -688,9 +688,9 @@ h2.section-title {
     <div class="verdict">
       <div class="verdict-stamp">VERDICT</div>
       <div class="verdict-text">
-        TPC 規則下，Day1 第一名只有<em> 47-52% </em>機率打進 Top 8；
-        同一場賽事換成 TPCi 規則，這個數字會跳到<em> 68-78%</em>。
-        差距 20-30 個百分點——這就是把局數差塞進主分數要付的代價。
+        TPC 規則下，Day1 第一名只有<em> 14-17% </em>機率打進 Top 8；
+        同一場賽事換成 TPCi 規則，這個數字會跳到<em> 27-37%</em>。
+        差距 10-21 個百分點——這就是把局數差塞進主分數要付的代價。
       </div>
     </div>
 
@@ -700,8 +700,8 @@ h2.section-title {
         <div class="finding-body">
           <h3>Day1 第一名的努力被打折</h3>
           <p>
-            TPC 制度下 Day1 第一名晉級率落在 47-52%，
-            TPCi 制度下落在 68-78%。Day2 BO3 的高分階梯（6 分上限 vs 3 分上限）
+            TPC 制度下 Day1 第一名晉級率落在 14-17%，
+            TPCi 制度下落在 27-37%。Day2 BO3 的高分階梯（6 分上限 vs 3 分上限）
             讓 Day2 一場好表現的權重等於 Day1 兩場。
             **Day1 表現好沒用，要看 Day2 抽到的對手與運氣**。
           </p>
@@ -712,12 +712,12 @@ h2.section-title {
         <div class="finding-body">
           <h3>Day2 Bye 是真實存在的捷徑</h3>
           <p>
-            Day1 末位晉級者在 Day2 有 35% 機率拿到至少一次 Bye。
-            TPC 規則下，有拿 Bye 者 Top8 率為 32-35%，
-            沒拿 Bye 者只有 17-19%——
-            <strong>Bye 紅利達到 +13 ~ +18 個百分點</strong>。
+            Day1 末位晉級者在 Day2 有 51% 機率拿到至少一次 Bye。
+            TPC 規則下，有拿 Bye 者 Top8 率為 3.7-5.1%，
+            沒拿 Bye 者只有 1.3-2.0%——
+            <strong>Bye 紅利達到 +2.3 ~ +3.4 個百分點</strong>。
             換句話說，最後晉級者能不能進 Top8，
-            有一半的解釋力來自隨機分配的輪空。
+            絕大部分的解釋力來自隨機分配的輪空。
           </p>
         </div>
       </div>
@@ -727,7 +727,7 @@ h2.section-title {
           <h3>TPCi 讓 Day1 的領先優勢真正可被保護</h3>
           <p>
             觀察兩種制度下，超時率從 0% 升到 40% 時 Day1 第一名 Top8 率的變化：
-            TPCi 從 68.4% 升到 78.0%（+10pp），TPC 只從 47.1% 升到 51.9%（+5pp）。
+            TPCi 從 27.4% 升到 37.4%（+10pp），TPC 只從 17.3% 動到 16.8%（幾乎不動）。
             原因在於 TPC 每場 6 分的上限讓 Day1 的累積領先「不夠多」，
             一兩場 Day2 的好表現就能追上；
             TPCi 每場上限只有 3 分，Day1 多贏的場次在最終排名上佔比更高，
@@ -752,7 +752,7 @@ h2.section-title {
   </div>
 
   <div class="footer">
-    SIMULATION · 400 PLAYERS × 4000 RUNS · ASSUMPTIONS: 50/50 WIN RATE · SWISS PAIRING · BYE TO LOWEST-SCORE GROUP · NO TIEBREAKER MODELED
+    SIMULATION · 3036 PLAYERS × 4000 RUNS · ASSUMPTIONS: 50/50 WIN RATE · SWISS PAIRING · BYE TO LOWEST-SCORE GROUP · NO TIEBREAKER MODELED
   </div>
 
   <div class="brand-logo bottom">
@@ -764,24 +764,31 @@ h2.section-title {
 // 載入模擬資料
 const DATA = {
   pacs: [
-    {p_timeout:0.0, first_top8:47.08, last_top8:23.62, first_bye_rate:0.12, last_bye_rate:35.85, last_top8_with_bye:31.87, last_top8_no_bye:19.02, bye_advantage_pp:12.85},
-    {p_timeout:0.05, first_top8:48.65, last_top8:22.57, first_bye_rate:0.07, last_bye_rate:35.70, last_top8_with_bye:33.40, last_top8_no_bye:16.56, bye_advantage_pp:16.84},
-    {p_timeout:0.15, first_top8:51.18, last_top8:22.95, first_bye_rate:0.07, last_bye_rate:34.75, last_top8_with_bye:33.24, last_top8_no_bye:17.47, bye_advantage_pp:15.77},
-    {p_timeout:0.25, first_top8:51.05, last_top8:24.75, first_bye_rate:0.05, last_bye_rate:35.85, last_top8_with_bye:35.22, last_top8_no_bye:18.90, bye_advantage_pp:16.32},
-    {p_timeout:0.40, first_top8:51.85, last_top8:23.77, first_bye_rate:0.10, last_bye_rate:34.58, last_top8_with_bye:35.36, last_top8_no_bye:17.65, bye_advantage_pp:17.70}
+    {p_timeout:0.0,  first_top8:17.32, last_top8:3.20, first_bye_rate:0.00, last_bye_rate:51.42, last_top8_with_bye:4.38, last_top8_no_bye:1.96, bye_advantage_pp:2.42},
+    {p_timeout:0.05, first_top8:15.93, last_top8:3.33, first_bye_rate:0.00, last_bye_rate:51.38, last_top8_with_bye:4.72, last_top8_no_bye:1.85, bye_advantage_pp:2.87},
+    {p_timeout:0.15, first_top8:14.57, last_top8:3.10, first_bye_rate:0.00, last_bye_rate:50.85, last_top8_with_bye:4.23, last_top8_no_bye:1.93, bye_advantage_pp:2.30},
+    {p_timeout:0.25, first_top8:15.47, last_top8:2.50, first_bye_rate:0.00, last_bye_rate:51.05, last_top8_with_bye:3.67, last_top8_no_bye:1.28, bye_advantage_pp:2.40},
+    {p_timeout:0.40, first_top8:16.83, last_top8:3.43, first_bye_rate:0.00, last_bye_rate:51.80, last_top8_with_bye:5.07, last_top8_no_bye:1.66, bye_advantage_pp:3.41}
   ],
   mtg: [
-    {p_timeout:0.0, first_top8:68.35, last_top8:19.55, first_bye_rate:0.00, last_bye_rate:35.77, last_top8_with_bye:26.07, last_top8_no_bye:15.92, bye_advantage_pp:10.15},
-    {p_timeout:0.05, first_top8:69.42, last_top8:20.45, first_bye_rate:0.00, last_bye_rate:37.92, last_top8_with_bye:27.03, last_top8_no_bye:16.43, bye_advantage_pp:10.60},
-    {p_timeout:0.15, first_top8:71.67, last_top8:18.10, first_bye_rate:0.00, last_bye_rate:35.30, last_top8_with_bye:25.42, last_top8_no_bye:14.10, bye_advantage_pp:11.32},
-    {p_timeout:0.25, first_top8:73.85, last_top8:18.57, first_bye_rate:0.00, last_bye_rate:36.62, last_top8_with_bye:24.57, last_top8_no_bye:15.11, bye_advantage_pp:9.46},
-    {p_timeout:0.40, first_top8:77.98, last_top8:19.25, first_bye_rate:0.00, last_bye_rate:36.68, last_top8_with_bye:27.95, last_top8_no_bye:14.21, bye_advantage_pp:13.74}
+    {p_timeout:0.0,  first_top8:27.40, last_top8:1.50, first_bye_rate:0.00, last_bye_rate:49.35, last_top8_with_bye:1.93, last_top8_no_bye:1.09, bye_advantage_pp:0.84},
+    {p_timeout:0.05, first_top8:30.33, last_top8:1.75, first_bye_rate:0.00, last_bye_rate:51.05, last_top8_with_bye:2.64, last_top8_no_bye:0.82, bye_advantage_pp:1.83},
+    {p_timeout:0.15, first_top8:31.55, last_top8:1.52, first_bye_rate:0.00, last_bye_rate:51.90, last_top8_with_bye:2.31, last_top8_no_bye:0.68, bye_advantage_pp:1.64},
+    {p_timeout:0.25, first_top8:34.27, last_top8:1.15, first_bye_rate:0.00, last_bye_rate:51.98, last_top8_with_bye:1.64, last_top8_no_bye:0.62, bye_advantage_pp:1.01},
+    {p_timeout:0.40, first_top8:37.35, last_top8:1.10, first_bye_rate:0.00, last_bye_rate:51.80, last_top8_with_bye:1.79, last_top8_no_bye:0.36, bye_advantage_pp:1.42}
   ]
 };
 
 const TIMEOUTS = ['0%','5%','15%','25%','40%'];
 const PACS_COLOR = '#c93419';
 const MTG_COLOR = '#1f4d3f';
+
+// 圖表 Y 軸範圍（3036 人版本數字較小，需縮放）
+const Y1_MAX = 50;   // 圖 1：第一名 Top8 率（max ~37%）
+const Y1_STEP = 10;
+const Y2_MAX = 10;   // 圖 2：末位條件機率（max ~5%）
+const Y2_STEP = 2;
+
 let currentIdx = 2;
 
 // 更新 callout
@@ -800,12 +807,11 @@ function drawChart1() {
   const cw = W - ml - mr;
   const ch = H - mt - mb;
   
-  // Y 軸 0-100%
   const xs = TIMEOUTS.map((_,i) => ml + (cw / (TIMEOUTS.length-1)) * i);
-  
+
   // 格線
-  for (let y = 0; y <= 100; y += 20) {
-    const yPos = mt + ch - (y/100) * ch;
+  for (let y = 0; y <= Y1_MAX; y += Y1_STEP) {
+    const yPos = mt + ch - (y/Y1_MAX) * ch;
     const line = document.createElementNS('http://www.w3.org/2000/svg','line');
     line.setAttribute('x1', ml);
     line.setAttribute('x2', W - mr);
@@ -855,7 +861,7 @@ function drawChart1() {
   
   // 畫線
   function drawLine(data, color, key) {
-    const pts = data.map((d, i) => `${xs[i]},${mt + ch - (d[key]/100) * ch}`).join(' ');
+    const pts = data.map((d, i) => `${xs[i]},${mt + ch - (d[key]/Y1_MAX) * ch}`).join(' ');
     const poly = document.createElementNS('http://www.w3.org/2000/svg','polyline');
     poly.setAttribute('points', pts);
     poly.setAttribute('stroke', color);
@@ -864,7 +870,7 @@ function drawChart1() {
     svg.appendChild(poly);
     
     data.forEach((d, i) => {
-      const cx = xs[i], cy = mt + ch - (d[key]/100) * ch;
+      const cx = xs[i], cy = mt + ch - (d[key]/Y1_MAX) * ch;
       const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
       c.setAttribute('cx', cx);
       c.setAttribute('cy', cy);
@@ -920,9 +926,9 @@ function drawChart2() {
   const groupW = cw / nGroup;
   const barW = (groupW - 16) / 4;
   
-  // Y 軸 0-50%
-  for (let y = 0; y <= 50; y += 10) {
-    const yPos = mt + ch - (y/50) * ch;
+  // Y 軸 0-Y2_MAX
+  for (let y = 0; y <= Y2_MAX; y += Y2_STEP) {
+    const yPos = mt + ch - (y/Y2_MAX) * ch;
     const line = document.createElementNS('http://www.w3.org/2000/svg','line');
     line.setAttribute('x1', ml);
     line.setAttribute('x2', W - mr);
@@ -957,7 +963,7 @@ function drawChart2() {
     ];
     
     bars.forEach(b => {
-      const h = (b.v/50) * ch;
+      const h = (b.v/Y2_MAX) * ch;
       const r = document.createElementNS('http://www.w3.org/2000/svg','rect');
       r.setAttribute('x', b.x);
       r.setAttribute('y', mt + ch - h);
@@ -979,7 +985,7 @@ function drawChart2() {
         tx.setAttribute('font-size', '10');
         tx.setAttribute('font-weight', '700');
         tx.setAttribute('fill', b.color);
-        tx.textContent = b.v.toFixed(1);
+        tx.textContent = b.v.toFixed(2);
         svg.appendChild(tx);
       }
     });
