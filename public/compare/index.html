@@ -539,11 +539,11 @@ h2.section-title {
 
   <div class="title-block">
     <div class="kicker">Tournament Format Analysis</div>
-    <h1 class="title">Day1 打到第一名，為什麼只剩一半機率進 Top 8？</h1>
+    <h1 class="title">Day1 打到第一名，為什麼只剩<em>一半機率</em>進 Top 8？</h1>
     <p class="dek">
       把 TPC 大師球聯盟賽的「6-5-3-1-0」BO3 計分系統，
       跟 TPCi BO3 的「3-1-0」標準制度
-      丟進同一個 400 人賽事模型，用四千次模擬看出兩件事——
+      丟進同一個 400 人賽事模型，用四千次模擬看出兩件事——<br>
       <strong>Day1 第一名的努力值多少，以及 Day1 末位的運氣值多少。</strong>
     </p>
   </div>
@@ -587,7 +587,6 @@ h2.section-title {
           <tr><td class="result">BO3 贏 2-0</td><td class="points">6 / 0</td></tr>
           <tr><td class="result">BO3 贏 2-1</td><td class="points">5 / 1</td></tr>
           <tr><td class="result">時間到 1-0</td><td class="points">3 / 0</td></tr>
-          <tr><td class="result">時間到 0-0</td><td class="points">0 / 0 雙敗</td></tr>
           <tr><td class="result">輪空 (Bye)</td><td class="points">6</td></tr>
         </table>
       </div>
@@ -599,7 +598,7 @@ h2.section-title {
           <tr><td class="result">時間到平手</td><td class="points">1 / 1</td></tr>
           <tr><td class="result">輪空 (Bye)</td><td class="points">3</td></tr>
           <tr><td class="result">局數差異</td><td class="points">→ Tiebreaker</td></tr>
-          <tr><td class="result">同分排序</td><td class="points">OMW% / GW% / OGW%</td></tr>
+          <tr><td class="result">同分排序</td><td class="points">OMW% / WOScore / AVOMW%</td></tr>
         </table>
       </div>
     </div>
@@ -689,7 +688,7 @@ h2.section-title {
     <div class="verdict">
       <div class="verdict-stamp">VERDICT</div>
       <div class="verdict-text">
-        TPC 規則下，Day1 第一名只有<em> 47-51% </em>機率打進 Top 8；
+        TPC 規則下，Day1 第一名只有<em> 47-52% </em>機率打進 Top 8；
         同一場賽事換成 TPCi 規則，這個數字會跳到<em> 68-78%</em>。
         差距 20-30 個百分點——這就是把局數差塞進主分數要付的代價。
       </div>
@@ -701,7 +700,7 @@ h2.section-title {
         <div class="finding-body">
           <h3>Day1 第一名的努力被打折</h3>
           <p>
-            TPC 制度下 Day1 第一名晉級率落在 47-51%，
+            TPC 制度下 Day1 第一名晉級率落在 47-52%，
             TPCi 制度下落在 68-78%。Day2 BO3 的高分階梯（6 分上限 vs 3 分上限）
             讓 Day2 一場好表現的權重等於 Day1 兩場。
             **Day1 表現好沒用，要看 Day2 抽到的對手與運氣**。
@@ -714,9 +713,9 @@ h2.section-title {
           <h3>Day2 Bye 是真實存在的捷徑</h3>
           <p>
             Day1 末位晉級者在 Day2 有 35% 機率拿到至少一次 Bye。
-            TPC 規則下，有拿 Bye 者 Top8 率為 31-39%，
-            沒拿 Bye 者只有 17-20%——
-            <strong>Bye 紅利達到 +13 ~ +22 個百分點</strong>。
+            TPC 規則下，有拿 Bye 者 Top8 率為 32-35%，
+            沒拿 Bye 者只有 17-19%——
+            <strong>Bye 紅利達到 +13 ~ +18 個百分點</strong>。
             換句話說，最後晉級者能不能進 Top8，
             有一半的解釋力來自隨機分配的輪空。
           </p>
@@ -725,13 +724,14 @@ h2.section-title {
       <div class="finding">
         <div class="finding-num">03</div>
         <div class="finding-body">
-          <h3>超時越多，制度越偏向弱者</h3>
+          <h3>TPCi 讓 Day1 的領先優勢真正可被保護</h3>
           <p>
-            TPC 規則下，超時率從 0% 升到 40% 時，
-            Day1 末位晉級者的 Top8 率從 23.6% 升到 25.3%，
-            而 TPCi 規則下幾乎不變（19.6% → 18.7%）。
-            慢牌組環境放大隨機性，反而對 Day1 強者不利——
-            這違反任何競技賽制的設計初衷。
+            觀察兩種制度下，超時率從 0% 升到 40% 時 Day1 第一名 Top8 率的變化：
+            TPCi 從 68.4% 升到 78.0%（+10pp），TPC 只從 47.1% 升到 51.9%（+5pp）。
+            原因在於 TPC 每場 6 分的上限讓 Day1 的累積領先「不夠多」，
+            一兩場 Day2 的好表現就能追上；
+            TPCi 每場上限只有 3 分，Day1 多贏的場次在最終排名上佔比更高，
+            <strong>Day1 表現的價值被完整保留</strong>。
           </p>
         </div>
       </div>
@@ -764,18 +764,18 @@ h2.section-title {
 // 載入模擬資料
 const DATA = {
   pacs: [
-    {p_timeout:0.0, first_top8:47.08, last_top8:23.62, first_bye_rate:0.13, last_bye_rate:35.85, last_top8_with_bye:31.87, last_top8_no_bye:19.02, bye_advantage_pp:12.85},
-    {p_timeout:0.05, first_top8:49.40, last_top8:22.53, first_bye_rate:0.05, last_bye_rate:35.55, last_top8_with_bye:31.08, last_top8_no_bye:17.80, bye_advantage_pp:13.28},
-    {p_timeout:0.15, first_top8:49.88, last_top8:24.00, first_bye_rate:0.00, last_bye_rate:35.35, last_top8_with_bye:36.42, last_top8_no_bye:17.21, bye_advantage_pp:19.21},
-    {p_timeout:0.25, first_top8:50.10, last_top8:25.28, first_bye_rate:0.00, last_bye_rate:34.78, last_top8_with_bye:35.23, last_top8_no_bye:19.97, bye_advantage_pp:15.26},
-    {p_timeout:0.40, first_top8:50.68, last_top8:25.25, first_bye_rate:0.00, last_bye_rate:35.40, last_top8_with_bye:39.19, last_top8_no_bye:17.61, bye_advantage_pp:21.59}
+    {p_timeout:0.0, first_top8:47.08, last_top8:23.62, first_bye_rate:0.12, last_bye_rate:35.85, last_top8_with_bye:31.87, last_top8_no_bye:19.02, bye_advantage_pp:12.85},
+    {p_timeout:0.05, first_top8:48.65, last_top8:22.57, first_bye_rate:0.07, last_bye_rate:35.70, last_top8_with_bye:33.40, last_top8_no_bye:16.56, bye_advantage_pp:16.84},
+    {p_timeout:0.15, first_top8:51.18, last_top8:22.95, first_bye_rate:0.07, last_bye_rate:34.75, last_top8_with_bye:33.24, last_top8_no_bye:17.47, bye_advantage_pp:15.77},
+    {p_timeout:0.25, first_top8:51.05, last_top8:24.75, first_bye_rate:0.05, last_bye_rate:35.85, last_top8_with_bye:35.22, last_top8_no_bye:18.90, bye_advantage_pp:16.32},
+    {p_timeout:0.40, first_top8:51.85, last_top8:23.77, first_bye_rate:0.10, last_bye_rate:34.58, last_top8_with_bye:35.36, last_top8_no_bye:17.65, bye_advantage_pp:17.70}
   ],
   mtg: [
-    {p_timeout:0.0, first_top8:68.35, last_top8:19.55, first_bye_rate:0.00, last_bye_rate:35.78, last_top8_with_bye:26.07, last_top8_no_bye:15.92, bye_advantage_pp:10.15},
-    {p_timeout:0.05, first_top8:70.03, last_top8:19.03, first_bye_rate:0.00, last_bye_rate:34.80, last_top8_with_bye:26.87, last_top8_no_bye:14.84, bye_advantage_pp:12.03},
-    {p_timeout:0.15, first_top8:70.90, last_top8:19.15, first_bye_rate:0.00, last_bye_rate:36.03, last_top8_with_bye:28.17, last_top8_no_bye:14.07, bye_advantage_pp:14.11},
-    {p_timeout:0.25, first_top8:74.75, last_top8:19.13, first_bye_rate:0.00, last_bye_rate:36.13, last_top8_with_bye:26.57, last_top8_no_bye:14.91, bye_advantage_pp:11.66},
-    {p_timeout:0.40, first_top8:78.25, last_top8:18.73, first_bye_rate:0.00, last_bye_rate:35.73, last_top8_with_bye:26.80, last_top8_no_bye:14.24, bye_advantage_pp:12.57}
+    {p_timeout:0.0, first_top8:68.35, last_top8:19.55, first_bye_rate:0.00, last_bye_rate:35.77, last_top8_with_bye:26.07, last_top8_no_bye:15.92, bye_advantage_pp:10.15},
+    {p_timeout:0.05, first_top8:69.42, last_top8:20.45, first_bye_rate:0.00, last_bye_rate:37.92, last_top8_with_bye:27.03, last_top8_no_bye:16.43, bye_advantage_pp:10.60},
+    {p_timeout:0.15, first_top8:71.67, last_top8:18.10, first_bye_rate:0.00, last_bye_rate:35.30, last_top8_with_bye:25.42, last_top8_no_bye:14.10, bye_advantage_pp:11.32},
+    {p_timeout:0.25, first_top8:73.85, last_top8:18.57, first_bye_rate:0.00, last_bye_rate:36.62, last_top8_with_bye:24.57, last_top8_no_bye:15.11, bye_advantage_pp:9.46},
+    {p_timeout:0.40, first_top8:77.98, last_top8:19.25, first_bye_rate:0.00, last_bye_rate:36.68, last_top8_with_bye:27.95, last_top8_no_bye:14.21, bye_advantage_pp:13.74}
   ]
 };
 
@@ -1016,7 +1016,7 @@ function drawTable() {
   tbody.innerHTML = '';
   
   TIMEOUTS.forEach((t, i) => {
-    ['TPC','TPCI'].forEach((rule, ri) => {
+    ['TPC','TPCi'].forEach((rule, ri) => {
       const dataKey = ri === 0 ? 'pacs' : 'mtg';
       const d = DATA[dataKey][i];
       const tr = document.createElement('tr');
